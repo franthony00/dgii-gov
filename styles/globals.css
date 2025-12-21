@@ -1,11 +1,15 @@
+/* ============================================================
+   GLOBALS.CSS – SISTEMA BASE DEL PROYECTO
+   ============================================================ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Dark mode handling */
+/* Modo oscuro */
 @custom-variant dark (&:is(.dark *));
 
-/* VARIABLES DEL SISTEMA (NO TOCAR) */
+/* Variables globales del sistema */
 :root {
   --background: #ffffff;
   --foreground: #000000;
