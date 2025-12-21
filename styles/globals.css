@@ -1,26 +1,30 @@
-/* ============================================================
-   GLOBALS.CSS – SISTEMA BASE DEL PROYECTO
-   ============================================================ */
+/* =============================================
+   GLOBALS.CSS - SISTEMA BASE DEL PROYECTO
+   ============================================= */
 
+/* Importación de Tailwind */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Modo oscuro */
-@custom-variant dark (&:is(.dark *));
+/* =============================================
+   VARIABLES GLOBALES DEL SISTEMA
+   ============================================= */
 
-/* Variables globales del sistema */
 :root {
-  --background: #ffffff;
-  --foreground: #000000;
+    --background: #ffffff;
+    --foreground: #000000;
 }
 
-.dark {
-  --background: #111111;
-  --foreground: #ffffff;
+/* Reset básico */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+    background: var(--background);
+    color: var(--foreground);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
