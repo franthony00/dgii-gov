@@ -1,4 +1,4 @@
-import "../globals.css";
+import "../../styles/globals.css";
 import "./dgii.css"; 
 import { Suspense } from "react";
 import ViewerContent from "@/components/viewer-content";
