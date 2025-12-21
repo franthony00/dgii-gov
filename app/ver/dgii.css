@@ -1,13 +1,22 @@
-/* Replicando pixel-perfect el diseño oficial de DGII */
-body {
+/* ============================================================
+   DGII OFFICIAL STYLE - Pixel Perfect Replication
+   Isolation: This file affects ONLY pages that import it.
+   ============================================================ */
+
+/* Reset for this module only */
+.dgii-page * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+.dgii-page {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #e8e8e8;
 }
 
-/* Contenedor principal - máximo 900px centrado */
-.container {
+/* Main container */
+.dgii-container {
   max-width: 900px;
   margin: 0 auto;
   background-color: #ffffff;
@@ -16,8 +25,8 @@ body {
   flex-direction: column;
 }
 
-/* Header verde lima con texto PLACA PROVISIONAL */
-.header {
+/* Header */
+.dgii-header {
   background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%);
   padding: 28px 45px;
   border-bottom: 5px solid #4a7c2c;
@@ -25,79 +34,73 @@ body {
   align-items: center;
 }
 
-.header img {
+.dgii-header img {
   height: 50px;
   width: auto;
 }
 
-/* Sección de títulos - fondo blanco */
-.title-section {
+/* Title section */
+.dgii-title-section {
   background-color: #ffffff;
   padding: 30px 50px 20px 50px;
-}
-
-.title-section h1 {
-  margin: 0;
-  line-height: 1.2;
 }
 
 .title-orange {
   color: #ff9900;
   font-size: 28px;
   font-weight: 600;
-  margin: 0 0 8px 0;
+  margin-bottom: 8px;
 }
 
 .title-green {
   color: #5a9e3a;
   font-size: 36px;
   font-weight: 400;
-  margin: 0;
 }
 
-/* Contenedor de la tabla */
-.table-container {
+/* Table container */
+.dgii-table-section {
   padding: 30px 50px 50px 50px;
-  flex: 1;
   background-color: #ffffff;
+  flex: 1;
 }
 
-.table-container p {
+.dgii-table-section p {
   font-size: 16px;
-  color: #666666;
+  color: #666;
   margin: 20px 0;
 }
 
-/* Tabla con diseño exacto de DGII */
-table {
+/* Table */
+.dgii-table {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
   font-size: 16px;
-  margin: 0;
 }
 
-table tbody tr td:first-child {
+.dgii-table td {
+  border: 1px solid #ccc;
+  padding: 14px 20px;
+  vertical-align: middle;
+}
+
+/* Left column */
+.dgii-table td:first-child {
   background-color: #ebebeb;
-  padding: 14px 20px;
-  text-align: left;
+  color: #000;
   font-weight: 400;
-  color: #000000;
-  border: 1px solid #cccccc;
   width: 220px;
-  vertical-align: middle;
 }
 
-table tbody tr td:last-child {
-  background-color: #ffffff;
-  padding: 14px 20px;
-  color: #666666;
-  border: 1px solid #cccccc;
-  vertical-align: middle;
+/* Right column */
+.dgii-table td:last-child {
+  background-color: #fff;
+  color: #666;
 }
 
-/* Footer gris */
-.footer {
+/* Footer */
+.dgii-footer {
   background-color: #c8c8c8;
   padding: 18px 50px;
   color: #4a4a4a;
@@ -106,30 +109,34 @@ table tbody tr td:last-child {
   margin-top: auto;
 }
 
-/* Responsive para tablets */
+/* -----------------------------------------------------------
+   Responsive - Tablets
+----------------------------------------------------------- */
 @media (max-width: 900px) {
-  .container {
+  .dgii-container {
     margin: 0 20px;
   }
 }
 
-/* Responsive para móviles */
+/* -----------------------------------------------------------
+   Responsive - Mobile
+----------------------------------------------------------- */
 @media (max-width: 768px) {
-  .container {
-    max-width: 100%;
+  .dgii-container {
     margin: 0;
+    max-width: 100%;
   }
 
-  .header {
+  .dgii-header {
     padding: 22px 25px;
   }
 
-  .header img {
+  .dgii-header img {
     height: 40px;
   }
 
-  .title-section {
-    padding: 25px 25px 15px 25px;
+  .dgii-title-section {
+    padding: 25px;
   }
 
   .title-orange {
@@ -140,55 +147,52 @@ table tbody tr td:last-child {
     font-size: 28px;
   }
 
-  .table-container {
-    padding: 25px 25px 40px 25px;
+  .dgii-table-section {
+    padding: 25px;
   }
 
-  table {
+  .dgii-table {
     font-size: 14px;
   }
 
-  table tbody tr td:first-child {
-    width: 150px;
+  .dgii-table td:first-child,
+  .dgii-table td:last-child {
     padding: 12px 15px;
     font-size: 14px;
   }
 
-  table tbody tr td:last-child {
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
-  .footer {
+  .dgii-footer {
     padding: 15px 25px;
     font-size: 13px;
   }
 }
 
-/* Estilos de impresión */
+/* -----------------------------------------------------------
+   Print Version
+----------------------------------------------------------- */
 @media print {
-  body {
-    background-color: #ffffff;
+  .dgii-page {
+    background-color: #fff;
   }
 
-  .container {
+  .dgii-container {
     max-width: 100%;
     margin: 0;
   }
 
-  .header {
+  .dgii-header {
     background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%) !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  table tbody tr td:first-child {
+  .dgii-table td:first-child {
     background-color: #ebebeb !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
-  .footer {
+  .dgii-footer {
     background-color: #c8c8c8 !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
