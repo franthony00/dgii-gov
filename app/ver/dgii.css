@@ -1,21 +1,4 @@
-/* ============================================================
-   DGII OFFICIAL STYLE - Pixel Perfect Replication
-   Isolation: This file affects ONLY pages that import it.
-   ============================================================ */
-
-/* Reset for this module only */
-.dgii-page * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.dgii-page {
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #e8e8e8;
-}
-
-/* Main container */
+/* CONTENEDOR PRINCIPAL */
 .dgii-container {
   max-width: 900px;
   margin: 0 auto;
@@ -25,8 +8,8 @@
   flex-direction: column;
 }
 
-/* Header */
-.dgii-header {
+/* HEADER VERDE DGII */
+.dgii-header-green {
   background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%);
   padding: 28px 45px;
   border-bottom: 5px solid #4a7c2c;
@@ -34,13 +17,13 @@
   align-items: center;
 }
 
-.dgii-header img {
+.header-image {
   height: 50px;
   width: auto;
 }
 
-/* Title section */
-.dgii-title-section {
+/* TÍTULOS */
+.dgii-title {
   background-color: #ffffff;
   padding: 30px 50px 20px 50px;
 }
@@ -49,6 +32,7 @@
   color: #ff9900;
   font-size: 28px;
   font-weight: 600;
+  display: block;
   margin-bottom: 8px;
 }
 
@@ -56,145 +40,43 @@
   color: #5a9e3a;
   font-size: 36px;
   font-weight: 400;
+  display: block;
 }
 
-/* Table container */
-.dgii-table-section {
+/* CONTENIDO DGII */
+.dgii-content {
   padding: 30px 50px 50px 50px;
-  background-color: #ffffff;
-  flex: 1;
-}
-
-.dgii-table-section p {
   font-size: 16px;
   color: #666;
-  margin: 20px 0;
 }
 
-/* Table */
-.dgii-table {
+/* TABLA */
+#content table {
   width: 100%;
   border-collapse: collapse;
   border: 1px solid #ccc;
-  font-size: 16px;
 }
 
-.dgii-table td {
-  border: 1px solid #ccc;
-  padding: 14px 20px;
-  vertical-align: middle;
-}
-
-/* Left column */
-.dgii-table td:first-child {
+#content td:first-child {
   background-color: #ebebeb;
-  color: #000;
+  padding: 14px 20px;
   font-weight: 400;
+  border: 1px solid #ccc;
   width: 220px;
 }
 
-/* Right column */
-.dgii-table td:last-child {
-  background-color: #fff;
+#content td:last-child {
+  padding: 14px 20px;
   color: #666;
+  border: 1px solid #ccc;
 }
 
-/* Footer */
-.dgii-footer {
+/* FOOTER */
+#footer {
   background-color: #c8c8c8;
   padding: 18px 50px;
-  color: #4a4a4a;
   font-size: 14px;
   text-align: center;
+  color: #4a4a4a;
   margin-top: auto;
-}
-
-/* -----------------------------------------------------------
-   Responsive - Tablets
------------------------------------------------------------ */
-@media (max-width: 900px) {
-  .dgii-container {
-    margin: 0 20px;
-  }
-}
-
-/* -----------------------------------------------------------
-   Responsive - Mobile
------------------------------------------------------------ */
-@media (max-width: 768px) {
-  .dgii-container {
-    margin: 0;
-    max-width: 100%;
-  }
-
-  .dgii-header {
-    padding: 22px 25px;
-  }
-
-  .dgii-header img {
-    height: 40px;
-  }
-
-  .dgii-title-section {
-    padding: 25px;
-  }
-
-  .title-orange {
-    font-size: 22px;
-  }
-
-  .title-green {
-    font-size: 28px;
-  }
-
-  .dgii-table-section {
-    padding: 25px;
-  }
-
-  .dgii-table {
-    font-size: 14px;
-  }
-
-  .dgii-table td:first-child,
-  .dgii-table td:last-child {
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
-  .dgii-footer {
-    padding: 15px 25px;
-    font-size: 13px;
-  }
-}
-
-/* -----------------------------------------------------------
-   Print Version
------------------------------------------------------------ */
-@media print {
-  .dgii-page {
-    background-color: #fff;
-  }
-
-  .dgii-container {
-    max-width: 100%;
-    margin: 0;
-  }
-
-  .dgii-header {
-    background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%) !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .dgii-table td:first-child {
-    background-color: #ebebeb !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-  .dgii-footer {
-    background-color: #c8c8c8 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
 }
