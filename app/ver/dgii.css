@@ -59,7 +59,7 @@
 /* Texto verde grande “Validación de Placa Provisional” */
 .title-green {
     color: #4b8101 !important;   /* Verde institucional para títulos */
-    font-size: 2.05em !important;
+    font-size: 2.07em !important;
     white-space: nowrap !important; /* Evita saltos en pantallas cortas */
     line-height: 1.1em !important;
     margin-bottom: 0.4em !important;
@@ -76,39 +76,54 @@
     background: #ffffff !important;
 }
 
-/* Tabla general */
+/* ============================================================
+   TABLA (solo líneas internas, sin borde exterior)
+   ============================================================ */
+
+/* Tabla base sin bordes externos */
 .data_table {
     width: 100% !important;
     border-collapse: collapse !important;
-    border: 1px solid #cccccc !important;  /* Borde externo gris */
+    border: none !important; /* Elimina borde exterior completo */
     font-family: Arial, Helvetica, sans-serif !important;
 }
 
-/* Líneas divisorias entre filas */
+/* Fila: solo línea interna sutil */
 .data_table tr {
-    border-bottom: 1px solid #cccccc !important;
+    border-bottom: 1px solid #e3e3e3 !important; /* Línea muy suave */
 }
 
-/* Columna izquierda (gris, nombres de campos) */
+/* Última fila NO debe tener línea */
+.data_table tr:last-child {
+    border-bottom: none !important;
+}
+
+/* Celda izquierda (gris) sin bordes externos */
 .left-col {
-    background-color: #efefef !important; /* Gris institucional */
+    background-color: #efefef !important;
     width: 35% !important;
     padding: 15px 12px !important;
     font-weight: bold !important;
     font-size: 18px !important;
-    color: #000 !important;              /* Texto negro */
-    border-right: 1px solid #cccccc !important;
-    text-align: left !important;
+    color: #000000 !important;
+
+    /* Elimina bordes exteriores */
+    border: none !important;
+    
+    /* Línea divisoria sutil entre columnas */
+    border-right: 1px solid #e3e3e3 !important;
 }
 
-/* Columna derecha (datos) */
+/* Celda derecha (blanca) sin bordes externos */
 .right-col {
     background-color: #ffffff !important;
     width: 65% !important;
     padding: 15px 12px !important;
     font-size: 18px !important;
-    color: #676767 !important; /* Gris oscuro para datos */
-    border: 1px solid #cccccc !important;
+    color: #676767 !important;
+
+    /* Elimina borde grueso */
+    border: none !important;
 }
 
 
@@ -125,6 +140,11 @@
     border-top: 1px solid #b0b0b0 !important;
     text-align: left !important;     /* Como el original */
     margin-top: auto !important;
+
+     /* === Marco blanco (igual grosor en los tres lados) === */
+    border-top: 3px solid #ffffff !important;
+    border-left: 3px solid #ffffff !important;
+    border-right: 3px solid #ffffff !important;
 }
 
 
