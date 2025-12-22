@@ -24,7 +24,6 @@
     "isolatedModules": true
   },
 
-  // Archivos que debe incluir TypeScript
   "include": [
     "next-env.d.ts",
     "**/*.ts",
@@ -32,6 +31,5 @@
     ".next/types/**/*.ts"
   ],
 
-  // Archivos a excluir
   "exclude": ["node_modules"]
 }
