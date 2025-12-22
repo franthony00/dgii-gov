@@ -21,17 +21,16 @@
 #header {
     background-color: #7daf18 !important; /* Verde institucional DGII */
     padding: 22px 20px !important;        /* Espaciado similar al diseño original */
-    display: flex !important;             /* Alinea logo correctamente */
+    display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
 
-    /* === Marco blanco (igual grosor en los tres lados) === */
+    /* === Marco blanco de tres lados === */
     border-top: 3px solid #ffffff !important;
     border-left: 3px solid #ffffff !important;
     border-right: 3px solid #ffffff !important;
 
-    /* === Línea negra inferior === */
-    /* Se usa box-shadow en lugar de border para evitar el “pico” visual */
+    /* === Línea negra inferior SIN pico === */
     box-shadow: inset 0 -6px 0 #2d2d2d !important;
 }
 
@@ -41,27 +40,26 @@
    SECCIÓN DE TÍTULOS
    ============================================================ */
 
-/* Contenedor blanco donde están el título naranja y verde */
 #title {
     padding: 25px 20px 5px 20px !important;
     background-color: #ffffff !important;
 }
 
-/* Texto naranja “Dirección General de Impuestos Internos” */
+/* Texto naranja */
 .title-orange {
-    color: #d58f00 !important;   /* Naranja institucional */
+    color: #d58f00 !important;
     font-size: 1.17em !important;
     font-weight: bold !important;
     margin-bottom: 0.15em !important;
     display: block !important;
 }
 
-/* Texto verde grande “Validación de Placa Provisional” */
+/* Texto verde (VALIDACIÓN DE DOCUMENTOS) */
 .title-green {
-    color: #4b8101 !important;   /* Verde institucional para títulos */
+    color: #4b8101 !important;
     font-size: 2.07em !important;
-    font-weight: 400 !important; /* Menos grosor */
-    white-space: nowrap !important; /* Evita saltos en pantallas cortas */
+    font-weight: 400 !important; /* ← sin grosor extra */
+    white-space: nowrap !important;
     line-height: 1.1em !important;
     margin-bottom: 0.4em !important;
 }
@@ -69,94 +67,97 @@
 
 
 /* ============================================================
-   CONTENEDOR DE TABLA DE DATOS
+   CONTENEDOR DEL CUERPO
    ============================================================ */
 
 #content {
     padding: 10px 20px 40px 20px !important;
     background: #ffffff !important;
+
+    /* Para separarlo del footer (5cm opcional si lo deseas luego) */
+    /* margin-bottom: 5cm !important; */
 }
 
+
+
 /* ============================================================
-   TABLA (solo líneas internas, sin borde exterior)
+   TABLA (solo líneas internas, sin marco exterior)
    ============================================================ */
 
-/* Tabla base sin bordes externos */
 .data_table {
     width: 100% !important;
     border-collapse: collapse !important;
-    border: none !important; /* Elimina borde exterior completo */
+    border: none !important; /* Se elimina completamente marco exterior */
     font-family: Arial, Helvetica, sans-serif !important;
 }
 
-/* Fila: solo línea interna sutil */
+/* Líneas internas */
 .data_table tr {
-    border-bottom: 1px solid #e3e3e3 !important; /* Línea muy suave */
+    border-bottom: 1px solid #e3e3e3 !important;
 }
 
-/* Última fila NO debe tener línea */
+/* Última fila sin borde */
 .data_table tr:last-child {
     border-bottom: none !important;
 }
 
-/* Celda izquierda (gris) sin bordes externos */
+/* COLUMNA IZQUIERDA */
 .left-col {
     background-color: #efefef !important;
     width: 35% !important;
     padding: 15px 12px !important;
-    font-weight: 400 !important; /* ← YA NO ES BOLD */
+    font-weight: 400 !important; /* ← ya no es bold */
     font-size: 18px !important;
     color: #000000 !important;
-
-    /* Elimina bordes exteriores */
     border: none !important;
-    
-    /* Línea divisoria sutil entre columnas */
+
+    /* Línea suave entre columnas */
     border-right: 1px solid #e3e3e3 !important;
 }
 
-/* Celda derecha (blanca) sin bordes externos */
+/* COLUMNA DERECHA */
 .right-col {
     background-color: #ffffff !important;
     width: 65% !important;
     padding: 15px 12px !important;
     font-size: 18px !important;
     color: #676767 !important;
-
-    /* Elimina borde grueso */
     border: none !important;
 }
 
 
 
 /* ============================================================
-   FOOTER GRIS
+   FOOTER (Banda gris)
    ============================================================ */
 
 #footer {
     padding: 18px 20px !important;
-    background: #cfcfcf !important;  /* Gris institucional */
+    background: #cfcfcf !important;
     color: #3a3a3a !important;
     font-size: 16px !important;
-    border-top: 1px solid #b0b0b0 !important;
-    text-align: left !important;     /* Como el original */
-    margin-top: auto !important;
+    text-align: left !important;
 
-     /* === Marco blanco (igual grosor en los tres lados) === */
+    /* Marco blanco */
     border-top: 3px solid #ffffff !important;
     border-left: 3px solid #ffffff !important;
     border-right: 3px solid #ffffff !important;
+
+    /* Línea gris superior */
+    border-top: 1px solid #b0b0b0 !important;
+
+    /* Para empujar el footer abajo en pantalla */
+    margin-top: auto !important;
 }
 
 
 
 /* ============================================================
-   RESPONSIVE DESIGN (MÓVILES)
+   RESPONSIVE (MÓVILES)
    ============================================================ */
 
 @media (max-width: 600px) {
 
-    /* Header más compacto */
     #header {
         padding: 18px 15px !important;
     }
@@ -165,11 +166,9 @@
         height: 22px !important;
     }
 
-    /* Ajuste de títulos */
     .title-orange { font-size: 1.02em !important; }
     .title-green  { font-size: 1.30em !important; }
 
-    /* Celdas más pequeñas */
     .left-col, .right-col {
         padding: 12px 10px !important;
         font-size: 16px !important;
