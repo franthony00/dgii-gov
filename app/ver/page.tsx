@@ -7,7 +7,6 @@ import ViewerContent from "@/components/viewer-content";
 function LoadingFallback() {
   return (
     <div className="dgii-container">
-
       {/* HEADER DGII */}
       <div className="dgii-header-green">
         <img
