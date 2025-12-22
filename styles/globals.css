@@ -1,19 +1,12 @@
-/* ============================
-   GLOBALS – Vercel compatible
-============================ */
-
-/* Tailwind layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Variables estándar */
 :root {
   --background: #ffffff;
   --foreground: #000000;
 }
 
-/* Reset */
 * {
   margin: 0;
   padding: 0;
