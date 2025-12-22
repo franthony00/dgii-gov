@@ -9,12 +9,10 @@
     "esModuleInterop": true,
     "module": "esnext",
 
-    // React 19 + Next.js 16 JSX runtime
     "jsx": "react-jsx",
 
     "incremental": true,
 
-    // Rutas absolutas
     "paths": {
       "@/*": ["./*"]
     },
