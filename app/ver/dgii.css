@@ -10,16 +10,19 @@
 }
 
 #header {
-    background-color: #7daf18 !important; /* Verde exacto de la imagen */
-    padding: 22px 20px !important;
-    border-bottom: 6px solid #2d2d2d !important; /* Línea negra gruesa inferior */
+    background-color: #7daf18 !important;
+    padding: 20px 20px !important; /* Ajuste exacto para que no sobresalga */
+    border-bottom: 6px solid #2d2d2d !important;
+
+    border-top: 3px solid #ffffff !important;
+    border-left: 3px solid #ffffff !important;
+    border-right: 3px solid #ffffff !important;
+
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
 
-   border-top: 3px solid #ffffff !important;    /* Borde blanco arriba */
-    border-left: 3px solid #ffffff !important;   /* Borde blanco izquierda */
-    border-right: 3px solid #ffffff !important;  /* Borde blanco derecha */
+    box-sizing: border-box !important; /* <- LA CLAVE PARA ELIMINAR EL PICO */
 }
 
 #header img {
