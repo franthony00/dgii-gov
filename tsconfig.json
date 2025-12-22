@@ -4,29 +4,27 @@
     "allowJs": true,
     "target": "ES6",
     "skipLibCheck": true,
-
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
 
     // React 19 + Next.js 16 JSX runtime
     "jsx": "react-jsx",
 
     "incremental": true,
 
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-
-    // Rutas absolutas "@/..."
+    // Rutas absolutas
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
 
-  // Archivos a incluir
+  // Archivos que debe incluir TypeScript
   "include": [
     "next-env.d.ts",
     "**/*.ts",
