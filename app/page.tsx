@@ -5,10 +5,7 @@ import { useRouter } from "next/navigation"
 import { FileUpload } from "@/components/file-upload"
 import { VehicleDataForm } from "@/components/vehicle-data-form"
 import { QRGenerator } from "@/components/qr-generator"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { AlertCircle, CheckCircle2, ScanLine, RotateCcw } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { OCRResult } from "@/lib/types"
 import { processOCRText, validateOCRResult } from "@/lib/ocr-utils"
 import { saveVehicleData } from "@/lib/storage"
@@ -29,34 +26,18 @@ export default function ScannerPage() {
     setValidationError(null)
 
     try {
-      // Realizar OCR con Tesseract.js
-      const result = await Tesseract.recognize(file, "spa", {
-        logger: (m) => {
-          if (m.status === "recognizing text") {
-            console.log(`[v0] OCR Progress: ${Math.round(m.progress * 100)}%`)
-          }
-        },
-      })
-
-      // Procesar el texto con nuestras utilidades
+      const result = await Tesseract.recognize(file, "spa")
       const processedData = processOCRText(result.data.text)
-
-      // Validar los resultados
       const validation = validateOCRResult(processedData)
 
       if (!validation.valid) {
-        setValidationError(
-          `No se pudieron detectar algunos campos: ${validation.missing.join(", ")}. Por favor, revisa y completa la información manualmente.`,
-        )
+        setValidationError(`No se pudieron detectar: ${validation.missing.join(", ")}.`);
       }
 
       setOcrResult(processedData)
       setStep("review")
     } catch (error) {
-      console.error("Error en OCR:", error)
-      setValidationError(
-        "Error al procesar el documento. Por favor, intenta con otra imagen o completa los datos manualmente.",
-      )
+      setValidationError("Error al procesar el documento.");
       setOcrResult({})
       setStep("review")
     } finally {
@@ -66,9 +47,7 @@ export default function ScannerPage() {
 
   const handleSubmit = async (data: OCRResult) => {
     setIsProcessing(true)
-
     try {
-      // Guardar en la base de datos
       const codigo = await saveVehicleData({
         placa: data.placa || "",
         tipoVehiculo: data.tipoVehiculo || "",
@@ -79,13 +58,11 @@ export default function ScannerPage() {
         chasis: data.chasis || "",
         fechaExpiracion: data.fechaExpiracion || "",
       })
-
       setGeneratedCode(codigo)
       setStep("qr")
-      setIsProcessing(false)
     } catch (error) {
-      console.error("Error al guardar:", error)
-      setValidationError("Error al guardar los datos. Por favor, intenta nuevamente.")
+      setValidationError("Error al guardar.");
+    } finally {
       setIsProcessing(false)
     }
   }
@@ -98,112 +75,93 @@ export default function ScannerPage() {
     setGeneratedCode(null)
   }
 
-  const clientUrl =
-    typeof window !== "undefined" && generatedCode ? `${window.location.origin}/ver?c=${generatedCode}` : ""
+  const clientUrl = typeof window !== "undefined" && generatedCode ? `${window.location.origin}/ver?c=${generatedCode}` : ""
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container max-w-4xl mx-auto px-4 py-12">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <ScanLine className="h-8 w-8 text-primary" />
+    <main style={{ minHeight: "100vh", backgroundColor: "#f8fafc", padding: "40px 20px", fontFamily: "sans-serif" }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+        
+        {/* Header con estilo DGII */}
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <div style={{ display: "inline-flex", padding: "15px", borderRadius: "50%", backgroundColor: "#e2e8f0", marginBottom: "15px" }}>
+            <ScanLine size={32} color="#475569" />
           </div>
-          <h1 className="text-4xl font-bold mb-3 text-balance">Sistema de Escáner de Documentos</h1>
-          <p className="text-muted-foreground text-lg text-balance">
+          <h1 style={{ fontSize: "2.5rem", fontWeight: "bold", color: "#1e293b", marginBottom: "10px" }}>
+            Sistema de Escáner de Documentos
+          </h1>
+          <p style={{ color: "#64748b", fontSize: "1.1rem" }}>
             Sube una imagen o PDF de tu documento vehicular para extraer la información automáticamente
           </p>
         </div>
 
-        {/* Step Indicator */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          <div className={`flex items-center gap-2 ${step === "upload" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "upload" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              1
+        {/* Indicador de Pasos (Step Indicator) */}
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", marginBottom: "40px" }}>
+          {[
+            { id: "upload", label: "Subir", num: 1 },
+            { id: "review", label: "Revisar", num: 2 },
+            { id: "qr", label: "QR", num: 3 }
+          ].map((s, i, arr) => (
+            <div key={s.id} style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div style={{
+                width: "35px", height: "35px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center",
+                backgroundColor: step === s.id ? "#1e293b" : "white",
+                color: step === s.id ? "white" : "#64748b",
+                border: "2px solid " + (step === s.id ? "#1e293b" : "#e2e8f0"),
+                fontWeight: "bold"
+              }}>
+                {s.num}
+              </div>
+              <span style={{ fontWeight: "500", color: step === s.id ? "#1e293b" : "#64748b" }}>{s.label}</span>
+              {i < arr.length - 1 && <div style={{ width: "40px", height: "2px", backgroundColor: "#e2e8f0" }} />}
             </div>
-            <span className="font-medium hidden sm:inline">Subir</span>
-          </div>
-          <div className="w-12 h-0.5 bg-border" />
-          <div className={`flex items-center gap-2 ${step === "review" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "review" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              2
-            </div>
-            <span className="font-medium hidden sm:inline">Revisar</span>
-          </div>
-          <div className="w-12 h-0.5 bg-border" />
-          <div className={`flex items-center gap-2 ${step === "qr" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "qr" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              3
-            </div>
-            <span className="font-medium hidden sm:inline">QR</span>
-          </div>
+          ))}
         </div>
 
-        {/* Content */}
-        {step === "upload" && <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />}
+        {/* Contenido Dinámico */}
+        <div style={{ backgroundColor: "white", padding: "30px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" }}>
+          
+          {step === "upload" && (
+            <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />
+          )}
 
-        {step === "review" && ocrResult && (
-          <div className="space-y-6">
-            {validationError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Atención</AlertTitle>
-                <AlertDescription>{validationError}</AlertDescription>
-              </Alert>
-            )}
-
-            <Card className="p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <h2 className="text-xl font-semibold">Información Extraída</h2>
+          {step === "review" && ocrResult && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+              {validationError && (
+                <div style={{ padding: "15px", backgroundColor: "#fef2f2", borderLeft: "4px solid #ef4444", color: "#b91c1c", borderRadius: "4px" }}>
+                  <strong>Atención:</strong> {validationError}
+                </div>
+              )}
+              <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "10px" }}>
+                <CheckCircle2 color="#16a34a" />
+                <h2 style={{ fontSize: "1.25rem", fontWeight: "bold" }}>Información Extraída</h2>
               </div>
-
-              <p className="text-sm text-muted-foreground mb-6">
-                Revisa y completa la información detectada del documento. Los campos marcados son obligatorios.
-              </p>
-
               <VehicleDataForm
                 initialData={ocrResult}
                 onSubmit={handleSubmit}
                 onCancel={handleReset}
                 isProcessing={isProcessing}
               />
-            </Card>
-          </div>
-        )}
-
-        {step === "qr" && generatedCode && (
-          <div className="space-y-6">
-            <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800 dark:text-green-200">¡Documento procesado exitosamente!</AlertTitle>
-              <AlertDescription className="text-green-700 dark:text-green-300">
-                Se ha generado el código <strong className="font-mono">{generatedCode}</strong> para este vehículo.
-              </AlertDescription>
-            </Alert>
-
-            <QRGenerator url={clientUrl} codigo={generatedCode} />
-
-            <div className="flex justify-center">
-              <Button onClick={handleReset} variant="outline" size="lg">
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Escanear otro documento
-              </Button>
             </div>
-          </div>
-        )}
+          )}
+
+          {step === "qr" && generatedCode && (
+            <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: "20px" }}>
+              <div style={{ padding: "15px", backgroundColor: "#f0fdf4", color: "#166534", borderRadius: "8px", border: "1px solid #bbf7d0" }}>
+                ¡Documento procesado! Código generado: <strong>{generatedCode}</strong>
+              </div>
+              <QRGenerator url={clientUrl} codigo={generatedCode} />
+              <button 
+                onClick={handleReset}
+                style={{
+                  marginTop: "20px", padding: "10px 20px", borderRadius: "6px", border: "1px solid #e2e8f0", 
+                  backgroundColor: "white", cursor: "pointer", display: "inline-flex", alignItems: "center", justifyContent: "center"
+                }}
+              >
+                <RotateCcw size={16} style={{ marginRight: "8px" }} /> Escanear otro
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </main>
   )
