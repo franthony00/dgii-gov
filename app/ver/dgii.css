@@ -3,20 +3,43 @@
    ============================================================ */
 
 /* HEADER - El bloque verde con la imagen */
+/* DGII.CSS - Ajuste del marco verde con bordes blancos */
 #header {
-    background-color: #7daf18 !important; /* Verde exacto de la imagen */
-    padding: 22px 20px !important;
-    border-bottom: 5px solid #2d2d2d !important; /* Línea negra gruesa inferior */
+    background-color: #ffffff !important; /* Fondo blanco para crear el borde */
+    padding: 15px 15px 0px 15px !important; /* El grosor del borde (arriba y lados) */
     display: flex !important;
+    justify-content: center !important;
     align-items: center !important;
+}
+
+.header-inner-green {
+    background-color: #7daf18 !important; /* El color verde oficial */
+    width: 100% !important;
+    padding: 20px !important; /* Espacio interno para la imagen */
+    display: flex !important;
     justify-content: flex-start !important;
+    border-bottom: 5px solid #2d2d2d !important; /* Línea negra inferior */
 }
 
 #header img {
-    height: 42px !important; /* Tamaño para que el logo "PLACA PROVISIONAL" se vea nítido */
+    height: 40px !important;
     width: auto !important;
-    display: block !important;
 }
+/*
+#header {
+    background-color: #7daf18 !important; /* Verde exacto de la imagen */
+/*    padding: 22px 20px !important;
+    border-bottom: 5px solid #2d2d2d !important; /* Línea negra gruesa inferior */
+  /*  display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+}/*
+/*
+#header img {
+    height: 42px !important; /* Tamaño para que el logo "PLACA PROVISIONAL" se vea nítido */
+  /*  width: auto !important;
+    display: block !important;
+}/* 
 
 /* SECCIÓN DE TÍTULOS */
 #title {
