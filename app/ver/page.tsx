@@ -1,38 +1,35 @@
-import "../../styles/globals.css";
-// Nota: Si ya pusiste todo en globals.css, quizás no necesites dgii.css, 
-// pero lo mantenemos por si tienes estilos específicos ahí.
+import "../globals.css"; // Ruta corregida asumiendo que está en app/globals.css
 import "./dgii.css"; 
 
 import { Suspense } from "react";
-import { ViewerContent } from "@/components/contenido-del-espectador"
+// Importación corregida a inglés y con guiones (sin espacios)
+import { ViewerContent } from "@/components/viewer-content";
 
 function LoadingFallback() {
   return (
-    <div className="container"> {/* Cambiado a 'container' según el CSS unificado */}
-      
-      {/* HEADER DGII con imagen integrada */}
+    <div className="container">
+      {/* HEADER DGII - Identificadores coincidentes con dgii.css */}
       <div id="header">
         <img
           src="/placa-provisional-header.png" 
           alt="PLACA PROVISIONAL"
-          className="header-img"
         />
       </div>
 
-      {/* TÍTULOS */}
+      {/* TÍTULOS - En inglés para consistencia */}
       <div id="title">
-        <span className="title-orange">Sistema Datamatrix</span>
-        <h1 className="title-green">Validación de Documentos</h1>
+        <span className="title-orange">Datamatrix System</span>
+        <h1 className="title-green">Document Validation</h1>
       </div>
 
       {/* CONTENIDO DE CARGA */}
       <div id="content">
-        <p style={{ padding: "20px 0", color: "#666" }}>Cargando información oficial...</p>
+        <p style={{ padding: "20px 0", color: "#666" }}>Loading official information...</p>
       </div>
 
-      {/* FOOTER (Opcional en fallback para que no salte el diseño) */}
+      {/* FOOTER */}
       <footer id="footer">
-        Dirección General de Impuestos Internos
+        General Directorate of Internal Taxes (DGII)
       </footer>
     </div>
   );
@@ -41,7 +38,7 @@ function LoadingFallback() {
 export default function VerPage() {
   return (
     <Suspense fallback={<LoadingFallback />}>
-      {/* Asegúrate de que ViewerContent use los mismos IDs (#header, #title, #content) */}
+      {/* El componente ViewerContent ahora usará los mismos IDs del CSS */}
       <ViewerContent />
     </Suspense>
   );
