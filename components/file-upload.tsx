@@ -1,99 +1,122 @@
 "use client"
 
-import React, { useState } from "react"
-import { Upload, Image as ImageIcon, FileText, Search } from "lucide-react"
+import type React from "react"
 
-export default function FileUpload() {
-  const [isDragging, setIsDragging] = useState(false)
+import { useState, useCallback } from "react"
+import { Upload, FileText, ImageIcon, Loader2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+
+interface FileUploadProps {
+  onFileSelect: (file: File) => void
+  isProcessing?: boolean
+}
+
+export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
+  const [dragActive, setDragActive] = useState(false)
+  const [preview, setPreview] = useState<string | null>(null)
+
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (e.type === "dragenter" || e.type === "dragover") {
+      setDragActive(true)
+    } else if (e.type === "dragleave") {
+      setDragActive(false)
+    }
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0])
+    }
+  }, [])
+
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0])
+    }
+  }, [])
+
+  const handleFile = (file: File) => {
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]
+
+    if (!validTypes.includes(file.type)) {
+      alert("Por favor sube una imagen (JPG, PNG, WEBP) o PDF")
+      return
+    }
+
+    // Crear preview para imágenes
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      setPreview(null)
+    }
+
+    onFileSelect(file)
+  }
 
   return (
-    <div className="container">
-      {/* HEADER TIPO DGII */}
-      <div id="header">
-        <img src="/placa-provisional-header.png" alt="DGII" style={{ height: '40px' }} />
+    <Card className="p-8">
+      <div
+        className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+          dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
+        } ${isProcessing ? "opacity-50 pointer-events-none" : ""}`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        <input
+          type="file"
+          id="file-upload"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          onChange={handleChange}
+          accept="image/*,application/pdf"
+          disabled={isProcessing}
+        />
+
+        {isProcessing ? (
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+            <p className="text-lg font-medium">Procesando documento...</p>
+            <p className="text-sm text-muted-foreground">Extrayendo información del documento</p>
+          </div>
+        ) : preview ? (
+          <div className="flex flex-col items-center gap-4">
+            <img src={preview || "/placeholder.svg"} alt="Preview" className="max-h-48 rounded-lg border shadow-sm" />
+            <p className="text-sm text-muted-foreground">Documento cargado correctamente</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-3 justify-center">
+              <Upload className="h-12 w-12 text-muted-foreground" />
+              <ImageIcon className="h-12 w-12 text-muted-foreground" />
+              <FileText className="h-12 w-12 text-muted-foreground" />
+            </div>
+
+            <div className="space-y-2">
+              <p className="text-lg font-medium">Arrastra tu documento aquí</p>
+              <p className="text-sm text-muted-foreground">o haz clic para seleccionar un archivo</p>
+            </div>
+
+            <Button type="button" variant="outline" className="mt-2 bg-transparent">
+              Seleccionar Archivo
+            </Button>
+
+            <p className="text-xs text-muted-foreground mt-4">Formatos soportados: JPG, PNG, WEBP, PDF</p>
+          </div>
+        )}
       </div>
-
-      <div id="title">
-        <span className="title-orange">Sistema de Escáner</span>
-        <h1 className="title-green">Extracción de Documentos Vehiculares</h1>
-        <p style={{ color: "#666", marginTop: "10px" }}>
-          Sube una imagen o PDF para extraer la información automáticamente.
-        </p>
-      </div>
-
-      <div id="content">
-        <div 
-          style={{
-            border: isDragging ? "2px dashed #7daf18" : "2px dashed #ccc",
-            borderRadius: "8px",
-            padding: "40px",
-            textAlign: "center",
-            backgroundColor: isDragging ? "#f0fdf4" : "#fafafa",
-            transition: "all 0.3s ease",
-            cursor: "pointer"
-          }}
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={(e) => { e.preventDefault(); setIsDragging(false); }}
-        >
-          <div style={{ marginBottom: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
-            <Upload size={40} color={isDragging ? "#7daf18" : "#666"} />
-            <ImageIcon size={40} color="#666" />
-            <FileText size={40} color="#666" />
-          </div>
-
-          <h3 style={{ fontSize: "1.2rem", color: "#333", marginBottom: "10px" }}>
-            Arrastra tu documento aquí
-          </h3>
-          <p style={{ color: "#888", marginBottom: "20px" }}>
-            o haz clic para seleccionar un archivo
-          </p>
-
-          <input 
-            type="file" 
-            id="fileInput" 
-            style={{ display: "none" }} 
-            accept="image/*,.pdf" 
-          />
-          <button 
-            onClick={() => document.getElementById('fileInput')?.click()}
-            style={{
-              backgroundColor: "#7daf18",
-              color: "white",
-              padding: "10px 25px",
-              borderRadius: "5px",
-              border: "none",
-              fontWeight: "bold",
-              cursor: "pointer",
-              fontSize: "16px"
-            }}
-          >
-            Seleccionar Archivo
-          </button>
-
-          <p style={{ marginTop: "20px", fontSize: "12px", color: "#999" }}>
-            Formatos soportados: JPG, PNG, WEBP, PDF
-          </p>
-        </div>
-
-        {/* PASOS DEL PROCESO */}
-        <div style={{ marginTop: "40px", display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "20px" }}>
-          <div style={{ textAlign: "center", padding: "15px", background: "#efefef", borderRadius: "5px" }}>
-            <span style={{ fontWeight: "bold", display: "block", color: "#d58f00" }}>1. Subir</span>
-            <small>Carga el documento</small>
-          </div>
-          <div style={{ textAlign: "center", padding: "15px", background: "#efefef", borderRadius: "5px" }}>
-            <span style={{ fontWeight: "bold", display: "block", color: "#d58f00" }}>2. Revisar</span>
-            <small>Verifica los datos</small>
-          </div>
-          <div style={{ textAlign: "center", padding: "15px", background: "#efefef", borderRadius: "5px" }}>
-            <span style={{ fontWeight: "bold", display: "block", color: "#d58f00" }}>3. Generar</span>
-            <small>Crea el código QR</small>
-          </div>
-        </div>
-      </div>
-
-      <div id="footer">Dirección General de Impuestos Internos</div>
-    </div>
+    </Card>
   )
 }
