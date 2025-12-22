@@ -97,6 +97,10 @@
     border-bottom: none !important;
 }
 
+/* Celdas más altas (vertical) para estirar la tabla */
+.left-col, .right-col {
+    padding: 28px 12px !important;  /* ↑↑ Aumenta solo altura ↑↑ */
+}
 .left-col {
     background: #efefef !important;
     width: 35% !important;
