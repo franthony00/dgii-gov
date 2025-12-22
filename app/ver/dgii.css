@@ -17,9 +17,9 @@
     align-items: center !important;
     justify-content: flex-start !important;
 
-   border-top: 20px solid #ffffff !important;    /* Borde blanco arriba */
-    border-left: 20px solid #ffffff !important;   /* Borde blanco izquierda */
-    border-right: 20px solid #ffffff !important;  /* Borde blanco derecha */
+   border-top: 2px solid #ffffff !important;    /* Borde blanco arriba */
+    border-left: 2px solid #ffffff !important;   /* Borde blanco izquierda */
+    border-right: 2px solid #ffffff !important;  /* Borde blanco derecha */
 }
 
 #header img {
