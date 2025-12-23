@@ -102,7 +102,8 @@
 .left-col {
     background: #efefef !important;
     width: 35% !important;
-    padding: 20px 12px !important;
+    padding: 20px 12px !important;   /* Celdas más altas */
+    font-size: 20px !important;      /* ↑ Texto más grande */
     font-weight: 400 !important;
     border: none !important;
     border-right: 1px solid #e3e3e3 !important;
@@ -111,7 +112,8 @@
 .right-col {
     background: #ffffff !important;
     width: 65% !important;
-    padding: 20px 12px !important;
+    padding: 20px 12px !important;   /* Celdas más altas */
+    font-size: 20px !important;      /* ↑ Texto más grande */
     color: #676767 !important;
     border: none !important;
 }
@@ -155,7 +157,7 @@
     .title-green  { font-size: 1.30em !important; }
 
     .left-col, .right-col {
-        padding: 12px 10px !important;
-        font-size: 16px !important;
+        padding: 20px 10px !important;
+        font-size: 18px !important;
     }
 }
