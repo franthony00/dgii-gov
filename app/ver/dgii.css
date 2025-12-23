@@ -48,7 +48,7 @@
 
 .title-green {
     color: #4b8101 !important;
-    font-size: 2.17em !important;
+    font-size: 2.12em !important;
     font-weight: 400 !important;
     white-space: nowrap !important;
     margin-bottom: .4em !important;
@@ -168,7 +168,7 @@
     }
 
     .title-orange { font-size: 1.30em !important; }
-    .title-green  { font-size: 2.17em !important; }
+    .title-green  { font-size: 2.12em !important; }
 
     .left-col, .right-col {
         padding: 20px 10px !important;
