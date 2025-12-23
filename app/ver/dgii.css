@@ -138,7 +138,7 @@
    RESPONSIVE (MÓVILES)
    ============================================================ */
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
 
     /* El content ocupa el espacio sobrante ↓↓↓ */
     #content {
