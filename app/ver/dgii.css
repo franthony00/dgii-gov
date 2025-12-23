@@ -164,14 +164,14 @@
     }
 
     #header img {
-        height: 27px !important;
+        height: 26px !important;
     }
 
-    .title-orange { font-size: 1.30em !important; }
+    .title-orange { font-size: 1.27em !important; }
     .title-green  { font-size: 1.60em !important; }
 
     .left-col, .right-col {
-        padding: 20px 10px !important;
+        padding: 18px 10px !important;
         font-size: 20px !important;
     }
 
