@@ -1,7 +1,6 @@
 /* ============================================================
    CONTENEDOR GENERAL (OBLIGA EL FOOTER A IR ABAJO)
    ============================================================ */
-
 #page-wrapper {
     min-height: 100vh;
     display: flex;
@@ -12,7 +11,6 @@
 /* ============================================================
    HEADER (Marco verde con logo y bordes)
    ============================================================ */
-
 #header img {
     height: 25px !important;
     width: auto !important;
@@ -25,23 +23,18 @@
     display: flex !important;
     align-items: center !important;
 
-    /* Marco blanco (3 lados) */
     border-top: 3px solid #ffffff !important;
     border-left: 3px solid #ffffff !important;
     border-right: 3px solid #ffffff !important;
 
-    /* Línea negra inferior sin picos */
     box-shadow: inset 0 -6px 0 #2d2d2d !important;
 }
-
-
 
 /* ============================================================
    TÍTULOS
    ============================================================ */
-
 #title {
-    padding: 25px 20px 5px 20px !important;
+    padding: 25px 20px 5px 20px !important; /* ← Mismo margen que tendrá la tabla */
     background: #ffffff !important;
 }
 
@@ -61,27 +54,30 @@
     margin-bottom: .4em !important;
 }
 
-
-
 /* ============================================================
-   CONTENEDOR DEL CUERPO (EXTENDEMOS UN POCO)
+   CONTENEDOR DEL CUERPO
    ============================================================ */
-
 #content {
     flex-grow: 1 !important;
+    padding: 0 20px !important;   /* ← AGREGO MÁRGENES LATERALES PARA CENTRAR LA TABLA */
     padding-bottom: 5px !important;
+    background: #fff !important;
 }
 
 /* ============================================================
-   TABLA (solo líneas internas)
+   TABLA — centrada y alineada con títulos
    ============================================================ */
-
 .data_table {
     width: 100% !important;
     border-collapse: collapse !important;
     border: none !important;
     font-family: Arial, Helvetica, sans-serif !important;
-    margin-bottom: 40px !important; /* Extensión visual */
+
+    margin-top: 5px !important;
+    margin-bottom: 40px !important;
+
+    /* Ajusta para que siempre quede centrada */
+    display: table !important;
 }
 
 .data_table tr {
@@ -92,61 +88,48 @@
     border-bottom: none !important;
 }
 
-/* Celdas más altas (vertical) para estirar la tabla */
-
+/* Celdas */
 .left-col {
     background: #efefef !important;
     width: 35% !important;
-    padding: 20px 12px !important;   /* Celdas más altas */
-    font-size: 20px !important;      /* ↑ Texto más grande */
+    padding: 20px 12px !important;
+    font-size: 20px !important;
     font-weight: 400 !important;
-    border: none !important;
     border-right: 1px solid #e3e3e3 !important;
 }
 
 .right-col {
     background: #ffffff !important;
     width: 65% !important;
-    padding: 20px 12px !important;   /* Celdas más altas */
-    font-size: 20px !important;      /* ↑ Texto más grande */
+    padding: 20px 12px !important;
+    font-size: 20px !important;
     color: #676767 !important;
-    border: none !important;
 }
 
-
-
 /* ============================================================
-   FOOTER (Pegado al borde inferior SIEMPRE)
+   FOOTER
    ============================================================ */
-
 #footer {
     padding: 18px 20px !important;
     background: #cfcfcf !important;
     color: #3a3a3a !important;
     font-size: 16px !important;
 
-    /* Marco blanco institucional */
     border-top: 3px solid #ffffff !important;
     border-left: 3px solid #ffffff !important;
     border-right: 3px solid #ffffff !important;
-
-    text-align: left !important;
 }
-
 
 /* ============================================================
    RESPONSIVE (MÓVILES)
    ============================================================ */
-
 @media (max-width: 600px) {
 
-    /* El content ocupa el espacio sobrante ↓↓↓ */
     #content {
-        flex-grow: 1 !important;     /* Fuerza a empujar el footer abajo */
-        padding-bottom: 1px !important; /* Espacio exacto entre tabla y footer */
+        padding: 1px !important; /* Márgenes laterales igual que DGII */
+        padding-bottom: 1px !important;
     }
 
-    /* Header móvil */
     #header {
         padding: 25px 15px !important;
     }
@@ -155,20 +138,15 @@
         height: 22px !important;
     }
 
-    /* Títulos */
     .title-orange { font-size: 1.02em !important; }
     .title-green  { font-size: 1.30em !important; }
 
-    /* Tabla más grande y legible en móvil */
     .left-col, .right-col {
         padding: 20px 10px !important;
         font-size: 18px !important;
     }
 
-    /* Para corregir 100vh en teléfonos (Safari/Chrome) */
     #page-wrapper {
-        min-height: 100dvh !important;  /* Usa dynamic viewport height */
-        display: flex !important;
-        flex-direction: column !important;
+        min-height: 100dvh !important;
     }
 }
