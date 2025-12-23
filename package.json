@@ -1,5 +1,5 @@
 {
-  "name": "dgii-placa-verificacion",
+  "name": "dgii-gov-do",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,8 @@
     "clsx": "^2.1.1",
     "tailwind-merge": "^3.3.1",
     "qrcode.react": "^4.0.1",
-    "date-fns": "4.1.0"
+    "date-fns": "4.1.0",
+    "pg": "^8.11.3"
   },
   "devDependencies": {
     "@types/node": "^22",
