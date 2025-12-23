@@ -3,14 +3,11 @@
    ============================================================ */
 
 #page-wrapper {
-    min-height: 100vh;                /* Ocupar toda la pantalla */
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;   /* Mantiene footer abajo */
     background: #ffffff !important;
 }
-
-
 
 /* ============================================================
    HEADER (Marco verde con logo y bordes)
@@ -71,11 +68,9 @@
    ============================================================ */
 
 #content {
-    padding-bottom: 55px !important; /* Más espacio con footer */
-    background: #ffffff !important;
+    flex-grow: 1 !important;
+    padding-bottom: 25px !important;
 }
-
-
 
 /* ============================================================
    TABLA (solo líneas internas)
