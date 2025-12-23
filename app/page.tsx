@@ -22,9 +22,9 @@ export default function ScannerPage() {
   const [step, setStep] = useState<"upload" | "review" | "qr">("upload")
   const [generatedCode, setGeneratedCode] = useState<string | null>(null)
 
-  // ============================================
-  // 1) Procesar el archivo con OCR
-  // ============================================
+  // ===============================
+  // 1) PROCESAR ARCHIVO CON OCR
+  // ===============================
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file)
     setIsProcessing(true)
@@ -34,7 +34,7 @@ export default function ScannerPage() {
       const result = await Tesseract.recognize(file, "spa", {
         logger: (m) => {
           if (m.status === "recognizing text") {
-            console.log(`[v0] OCR Progress: ${Math.round(m.progress * 100)}%`)
+            console.log(`[OCR] Progreso: ${Math.round(m.progress * 100)}%`)
           }
         },
       })
@@ -53,7 +53,7 @@ export default function ScannerPage() {
       setOcrResult(processedData)
       setStep("review")
     } catch (error) {
-      console.error("Error OCR:", error)
+      console.error("ERROR OCR:", error)
       setValidationError("No se pudo procesar el documento. Intenta otro archivo.")
       setOcrResult({})
       setStep("review")
@@ -62,9 +62,9 @@ export default function ScannerPage() {
     }
   }
 
-  // ============================================
-  // 2) Enviar datos al backend y guardar en PostgreSQL
-  // ============================================
+  // ===============================
+  // 2) GUARDAR EN LA BASE AWS POSTGRES
+  // ===============================
   const handleSubmit = async (data: OCRResult) => {
     setIsProcessing(true)
     setValidationError(null)
@@ -79,7 +79,7 @@ export default function ScannerPage() {
           marca: data.marca,
           modelo: data.modelo,
           color: data.color,
-          ano: data.año, // IMPORTANTE: en DB es "ano"
+          ano: data.año,
           chasis: data.chasis,
           fechaExpiracion: data.fechaExpiracion,
         }),
@@ -91,7 +91,7 @@ export default function ScannerPage() {
         throw new Error(result.error || "Error desconocido al guardar")
       }
 
-      setGeneratedCode(result.codigo) // recibiendo el código generado por la API
+      setGeneratedCode(result.codigo)
       setStep("qr")
     } catch (error) {
       console.error(error)
@@ -101,9 +101,9 @@ export default function ScannerPage() {
     }
   }
 
-  // ============================================
-  // 3) Reiniciar proceso
-  // ============================================
+  // ===============================
+  // 3) REINICIAR TODO
+  // ===============================
   const handleReset = () => {
     setSelectedFile(null)
     setOcrResult(null)
@@ -120,8 +120,8 @@ export default function ScannerPage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container max-w-4xl mx-auto px-4 py-12">
-
-        {/* Header */}
+        
+        {/* HEADER */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <ScanLine className="h-8 w-8 text-primary" />
@@ -150,11 +150,12 @@ export default function ScannerPage() {
           ))}
         </div>
 
-        {/* CONTENT */}
+        {/* CONTENIDO */}
         {step === "upload" && (
           <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />
         )}
 
+        {/* REVIEW */}
         {step === "review" && ocrResult && (
           <div className="space-y-6">
             {validationError && (
@@ -180,6 +181,7 @@ export default function ScannerPage() {
           </div>
         )}
 
+        {/* QR */}
         {step === "qr" && generatedCode && (
           <div className="space-y-6">
             <Alert className="bg-green-50 border-green-200">
@@ -199,7 +201,6 @@ export default function ScannerPage() {
             </div>
           </div>
         )}
-
       </div>
     </main>
   )

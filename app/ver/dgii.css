@@ -34,7 +34,7 @@
    TÍTULOS
    ============================================================ */
 #title {
-    padding: 25px 20px 5px 20px !important; /* ← Mismo margen que tendrá la tabla */
+    padding: 25px 20px 5px 20px !important;
     background: #ffffff !important;
 }
 
@@ -59,10 +59,10 @@
    ============================================================ */
 #content {
     flex-grow: 1 !important;
-    padding: 0 20px !important;   /* ← AGREGO MÁRGENES LATERALES PARA CENTRAR LA TABLA */
+    padding: 0 20px !important;
     padding-bottom: 5px !important;
     background: #fff !important;
-   padding-left: 20px !important;
+    padding-left: 20px !important;
     padding-right: 20px !important;
 }
 
@@ -78,9 +78,7 @@
     margin-top: 5px !important;
     margin-bottom: 40px !important;
 
-    /* Ajusta para que siempre quede centrada */
     display: table !important;
-
     margin-left: auto !important;
     margin-right: auto !important;
 }
@@ -129,12 +127,12 @@
 .table-wrapper {
     width: 100%;
     display: flex;
-    justify-content: center;   /* Centra horizontalmente */
+    justify-content: center;
     align-items: center;
     margin-top: 10px;
 
-    /* Limita el ancho visible igual que DGII */
-    padding: 0 22px !important;  /* ← ESTA ES LA CLAVE DEL DISEÑO REAL */
+    /* Límites iguales a DGII real */
+    padding: 0 22px !important;
 }
 
 .table-wrapper .data_table {
@@ -149,13 +147,13 @@
    .data_table {
         padding-left: 25px !important;
         padding-right: 25px !important;
-        width: calc(100% - 50px) !important; /* deja 25px por lado */
+        width: calc(100% - 50px) !important;
     }
 
     #content {
-       padding-left: 22px !important;
+        padding-left: 22px !important;
         padding-right: 22px !important;
-        padding: 1px !important; /* Márgenes laterales igual que DGII */
+        padding: 1px !important;
         padding-bottom: 1px !important;
     }
 
