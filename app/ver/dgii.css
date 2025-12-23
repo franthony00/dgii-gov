@@ -140,15 +140,13 @@
 
 @media (max-width: 600px) {
 
+    /* El content ocupa el espacio sobrante ↓↓↓ */
     #content {
-        padding-bottom: 55px !important;
-        /*
-            - Antes el espacio era demasiado grande.
-            - Ahora lo bajamos a ~55px ≈ 4 cm en móviles.
-            - Esto acerca visualmente el footer y deja la tabla más “completa”.
-        */
+        flex-grow: 1 !important;     /* Fuerza a empujar el footer abajo */
+        padding-bottom: 25px !important; /* Espacio exacto entre tabla y footer */
     }
 
+    /* Header móvil */
     #header {
         padding: 18px 15px !important;
     }
@@ -157,11 +155,20 @@
         height: 22px !important;
     }
 
+    /* Títulos */
     .title-orange { font-size: 1.02em !important; }
     .title-green  { font-size: 1.30em !important; }
 
+    /* Tabla más grande y legible en móvil */
     .left-col, .right-col {
         padding: 20px 10px !important;
         font-size: 18px !important;
+    }
+
+    /* Para corregir 100vh en teléfonos (Safari/Chrome) */
+    #page-wrapper {
+        min-height: 100dvh !important;  /* Usa dynamic viewport height */
+        display: flex !important;
+        flex-direction: column !important;
     }
 }
