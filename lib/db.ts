@@ -1,7 +1,14 @@
-import { Client } from "pg";
+import { Pool } from "pg";
 
-export const db = new Client({
-  connectionString: process.env.DATABASE_URL,
+const connectionString = process.env.NEON_URL;
+
+if (!connectionString) {
+  throw new Error("❌ Missing NEON_URL in environment variables");
+}
+
+export const db = new Pool({
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
-
-db.connect();
