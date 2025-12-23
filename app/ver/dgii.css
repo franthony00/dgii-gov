@@ -71,7 +71,7 @@
    ============================================================ */
 
 #content {
-    padding: 10px 20px 60px 20px !important; /* Más espacio con footer */
+    padding-bottom: 55px !important; /* Más espacio con footer */
     background: #ffffff !important;
 }
 
