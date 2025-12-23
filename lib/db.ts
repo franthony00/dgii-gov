@@ -1,9 +1,9 @@
 import { Pool } from "pg";
 
-const connectionString = process.env.NEON_URL;
+const connectionString = process.env.POSTGRES_URL;
 
 if (!connectionString) {
-  throw new Error("❌ Missing NEON_URL in environment variables");
+  throw new Error("❌ Missing POSTGRES_URL in environment variables");
 }
 
 export const db = new Pool({
