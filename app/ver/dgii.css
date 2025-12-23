@@ -40,7 +40,7 @@
 
 .title-orange {
     color: #d58f00 !important;
-    font-size: 1.20em !important;
+    font-size: 1.35em !important;
     font-weight: bold !important;
     margin-bottom: .15em !important;
     display: block !important;
@@ -48,7 +48,7 @@
 
 .title-green {
     color: #4b8101 !important;
-    font-size: 2.10em !important;
+    font-size: 2.20em !important;
     font-weight: 400 !important;
     white-space: nowrap !important;
     margin-bottom: .4em !important;
@@ -164,15 +164,15 @@
     }
 
     #header img {
-        height: 24px !important;
+        height: 27px !important;
     }
 
-    .title-orange { font-size: 1.02em !important; }
-    .title-green  { font-size: 1.30em !important; }
+    .title-orange { font-size: 1.30em !important; }
+    .title-green  { font-size: 2.30em !important; }
 
     .left-col, .right-col {
         padding: 20px 10px !important;
-        font-size: 18px !important;
+        font-size: 20px !important;
     }
 
     #page-wrapper {
