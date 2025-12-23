@@ -80,6 +80,9 @@
 
     /* Ajusta para que siempre quede centrada */
     display: table !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 .data_table tr {
@@ -143,6 +146,12 @@
    ============================================================ */
 @media (max-width: 600px) {
 
+   .data_table {
+        padding-left: 25px !important;
+        padding-right: 25px !important;
+        width: calc(100% - 50px) !important; /* deja 25px por lado */
+    }
+
     #content {
        padding-left: 22px !important;
         padding-right: 22px !important;
@@ -155,7 +164,7 @@
     }
 
     #header img {
-        height: 22px !important;
+        height: 24px !important;
     }
 
     .title-orange { font-size: 1.02em !important; }
