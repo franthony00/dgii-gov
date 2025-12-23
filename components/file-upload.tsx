@@ -1,121 +1,164 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useCallback } from "react"
-import { Upload, FileText, ImageIcon, Loader2 } from "lucide-react"
+import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Download, ExternalLink } from "lucide-react"
 
-interface FileUploadProps {
-  onFileSelect: (file: File) => void
-  isProcessing?: boolean
+const QRCodeSVG = dynamic(() => import("qrcode.react").then((mod) => mod.QRCodeSVG), { ssr: false })
+
+interface QRGeneratorProps {
+  url: string
+  codigo: string
 }
 
-export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
-  const [dragActive, setDragActive] = useState(false)
-  const [preview, setPreview] = useState<string | null>(null)
+export function QRGenerator({ url, codigo }: QRGeneratorProps) {
+  const [errorLevel, setErrorLevel] = useState<"L" | "M" | "Q" | "H">("L")
+  const [size, setSize] = useState(400)
+  const [border, setBorder] = useState(1)
+  const [isMounted, setIsMounted] = useState(false)
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true)
-    } else if (e.type === "dragleave") {
-      setDragActive(false)
-    }
+  useEffect(() => {
+    setIsMounted(true)
   }, [])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
+  const downloadQR = () => {
+    const svg = document.getElementById("qr-code") as HTMLElement
+    if (!svg) return
 
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0])
-    }
-  }, [])
+    const svgData = new XMLSerializer().serializeToString(svg)
+    const canvas = document.createElement("canvas")
+    const ctx = canvas.getContext("2d")
+    const img = new Image()
 
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    e.preventDefault()
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0])
-    }
-  }, [])
+    img.onload = () => {
+      canvas.width = size
+      canvas.height = size
+      ctx?.drawImage(img, 0, 0)
+      const pngFile = canvas.toDataURL("image/png")
 
-  const handleFile = (file: File) => {
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"]
-
-    if (!validTypes.includes(file.type)) {
-      alert("Por favor sube una imagen (JPG, PNG, WEBP) o PDF")
-      return
+      const downloadLink = document.createElement("a")
+      downloadLink.download = `qr-${codigo}.png`
+      downloadLink.href = pngFile
+      downloadLink.click()
     }
 
-    // Crear preview para imágenes
-    if (file.type.startsWith("image/")) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    } else {
-      setPreview(null)
-    }
+    img.src = "data:image/svg+xml;base64," + btoa(svgData)
+  }
 
-    onFileSelect(file)
+  if (!isMounted) {
+    return (
+      <Card className="p-6">
+        <h3 className="text-xl font-semibold mb-4">Código QR Generado</h3>
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="flex flex-col items-center">
+            <div className="bg-white p-4 rounded-lg border-2 border-border w-full max-w-[300px] h-[300px] flex items-center justify-center">
+              <div className="animate-pulse text-muted-foreground">Generando QR...</div>
+            </div>
+          </div>
+          <div className="space-y-4 animate-pulse">
+            <div className="h-20 bg-muted rounded" />
+            <div className="h-20 bg-muted rounded" />
+            <div className="h-20 bg-muted rounded" />
+          </div>
+        </div>
+      </Card>
+    )
   }
 
   return (
-    <Card className="p-8">
-      <div
-        className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
-          dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
-        } ${isProcessing ? "opacity-50 pointer-events-none" : ""}`}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
-      >
-        <input
-          type="file"
-          id="file-upload"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-          onChange={handleChange}
-          accept="image/*,application/pdf"
-          disabled={isProcessing}
-        />
+    <Card className="p-6">
+      <h3 className="text-xl font-semibold mb-4">Código QR Generado</h3>
+      <p className="text-sm text-muted-foreground mb-6">
+        Escanea este código QR para acceder directamente a la información del vehículo
+      </p>
 
-        {isProcessing ? (
-          <div className="flex flex-col items-center gap-4">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-lg font-medium">Procesando documento...</p>
-            <p className="text-sm text-muted-foreground">Extrayendo información del documento</p>
+      <div className="grid md:grid-cols-2 gap-8">
+        {/* QR Code Display */}
+        <div className="flex flex-col items-center">
+          <div className="bg-white p-4 rounded-lg border-2 border-border">
+            <QRCodeSVG
+              id="qr-code"
+              value={url}
+              size={size}
+              level={errorLevel}
+              marginSize={border}
+              className="w-full h-auto max-w-[300px]"
+            />
           </div>
-        ) : preview ? (
-          <div className="flex flex-col items-center gap-4">
-            <img src={preview || "/placeholder.svg"} alt="Preview" className="max-h-48 rounded-lg border shadow-sm" />
-            <p className="text-sm text-muted-foreground">Documento cargado correctamente</p>
-          </div>
-        ) : (
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-3 justify-center">
-              <Upload className="h-12 w-12 text-muted-foreground" />
-              <ImageIcon className="h-12 w-12 text-muted-foreground" />
-              <FileText className="h-12 w-12 text-muted-foreground" />
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-lg font-medium">Arrastra tu documento aquí</p>
-              <p className="text-sm text-muted-foreground">o haz clic para seleccionar un archivo</p>
-            </div>
-
-            <Button type="button" variant="outline" className="mt-2 bg-transparent">
-              Seleccionar Archivo
+          <div className="mt-4 flex gap-2">
+            <Button onClick={downloadQR} variant="outline" size="sm">
+              <Download className="h-4 w-4 mr-2" />
+              Descargar QR
             </Button>
-
-            <p className="text-xs text-muted-foreground mt-4">Formatos soportados: JPG, PNG, WEBP, PDF</p>
+            <Button asChild variant="outline" size="sm">
+              <a href={url} target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="h-4 w-4 mr-2" />
+                Ver Página
+              </a>
+            </Button>
           </div>
-        )}
+        </div>
+
+        {/* QR Configuration */}
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="error-level">Error Correction Code</Label>
+            <Select value={errorLevel} onValueChange={(value: any) => setErrorLevel(value)}>
+              <SelectTrigger id="error-level">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="L">L (Bajo - 7%)</SelectItem>
+                <SelectItem value="M">M (Medio - 15%)</SelectItem>
+                <SelectItem value="Q">Q (Alto - 25%)</SelectItem>
+                <SelectItem value="H">H (Muy Alto - 30%)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Nivel recomendado: L. Mayor corrección de errores = QR más denso
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="border">Border (Margen)</Label>
+            <Select value={border.toString()} onValueChange={(value) => setBorder(Number.parseInt(value))}>
+              <SelectTrigger id="border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">0 (Sin margen)</SelectItem>
+                <SelectItem value="1">1 (Recomendado)</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="4">4</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="size">Size (Tamaño en píxeles)</Label>
+            <Select value={size.toString()} onValueChange={(value) => setSize(Number.parseInt(value))}>
+              <SelectTrigger id="size">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="200">200 px</SelectItem>
+                <SelectItem value="300">300 px</SelectItem>
+                <SelectItem value="400">400 px (Recomendado)</SelectItem>
+                <SelectItem value="500">500 px</SelectItem>
+                <SelectItem value="600">600 px</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="pt-4 border-t">
+            <p className="text-sm font-medium mb-2">URL de acceso:</p>
+            <code className="text-xs bg-muted p-2 rounded block break-all">{url}</code>
+          </div>
+        </div>
       </div>
     </Card>
   )
