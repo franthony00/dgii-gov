@@ -2,36 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { FileUpload } from "@/components/file-upload";
 import { VehicleDataForm } from "@/components/vehicle-data-form";
 import { QRGenerator } from "@/components/qr-generator";
-
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-
 import { AlertCircle, CheckCircle2, ScanLine, RotateCcw } from "lucide-react";
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import type { OCRResult } from "@/lib/types";
 import { processOCRText, validateOCRResult } from "@/lib/ocr-utils";
-
 import Tesseract from "tesseract.js";
 
 export default function ScannerPage() {
   const router = useRouter();
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
-
   const [step, setStep] = useState<"upload" | "review" | "qr">("upload");
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
 
-  // ============================================================
-  // 1) PROCESAR ARCHIVO CON OCR
-  // ============================================================
+  // ============================================
+  // 1) PROCESAR OCR
+  // ============================================
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file);
     setIsProcessing(true);
@@ -41,26 +34,24 @@ export default function ScannerPage() {
       const result = await Tesseract.recognize(file, "spa", {
         logger: (m) => {
           if (m.status === "recognizing text") {
-            console.log(`[OCR] ${Math.round(m.progress * 100)}%`);
+            console.log("OCR:", Math.round(m.progress * 100) + "%");
           }
         },
       });
 
-      const processedData = processOCRText(result.data.text);
-
-      const validation = validateOCRResult(processedData);
+      const processed = processOCRText(result.data.text);
+      const validation = validateOCRResult(processed);
 
       if (!validation.valid) {
         setValidationError(
-          `No se detectaron algunos campos: ${validation.missing.join(", ")}. Completa los datos manualmente.`
+          `Faltan campos por detectar: ${validation.missing.join(", ")}`
         );
       }
 
-      setOcrResult(processedData);
+      setOcrResult(processed);
       setStep("review");
     } catch (error) {
-      console.error("Error OCR:", error);
-      setValidationError("Error al procesar el documento. Prueba otra imagen.");
+      setValidationError("No se pudo procesar este documento.");
       setOcrResult({});
       setStep("review");
     } finally {
@@ -68,13 +59,11 @@ export default function ScannerPage() {
     }
   };
 
-  // ============================================================
-  // 2) ENVIAR DATOS A API → Guardar en PostgreSQL
-  // ============================================================
+  // ============================================
+  // 2) GUARDAR EN POSTGRES
+  // ============================================
   const handleSubmit = async (data: OCRResult) => {
     setIsProcessing(true);
-    setValidationError(null);
-
     try {
       const response = await fetch("/api/vehiculo/create", {
         method: "POST",
@@ -85,7 +74,7 @@ export default function ScannerPage() {
           marca: data.marca,
           modelo: data.modelo,
           color: data.color,
-          ano: data.año, // EN DB ES ano (sin ñ)
+          ano: data.año,
           chasis: data.chasis,
           fechaExpiracion: data.fechaExpiracion,
         }),
@@ -94,28 +83,27 @@ export default function ScannerPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || "Error desconocido");
+        throw new Error(result.error || "Error guardando");
       }
 
       setGeneratedCode(result.codigo);
       setStep("qr");
     } catch (err) {
-      console.error(err);
-      setValidationError("Hubo un error guardando los datos.");
+      setValidationError("Error guardando la información.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // ============================================================
-  // 3) Reiniciar proceso
-  // ============================================================
+  // ============================================
+  // 3) REINICIAR
+  // ============================================
   const handleReset = () => {
     setSelectedFile(null);
     setOcrResult(null);
     setValidationError(null);
-    setStep("upload");
     setGeneratedCode(null);
+    setStep("upload");
   };
 
   const clientUrl =
@@ -123,46 +111,46 @@ export default function ScannerPage() {
       ? `${window.location.origin}/ver?c=${generatedCode}`
       : "";
 
-  // ============================================================
-  // RENDER
-  // ============================================================
   return (
     <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container max-w-4xl mx-auto px-4 py-12">
-
         {/* HEADER */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <ScanLine className="h-8 w-8 text-primary" />
           </div>
-
-          <h1 className="text-4xl font-bold mb-3">Sistema de Escáner de Documentos</h1>
+          <h1 className="text-4xl font-bold mb-3">
+            Sistema de Escáner de Documentos
+          </h1>
           <p className="text-muted-foreground text-lg">
-            Sube una imagen o PDF para extraer automáticamente la información vehicular
+            Sube un documento para extraer automáticamente la información
           </p>
         </div>
 
-        {/* PASOS */}
+        {/* INDICADOR DE PASOS */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          {["upload", "review", "qr"].map((s, i) => (
-            <div key={s} className={`flex items-center gap-2 ${step === s ? "text-primary" : "text-muted-foreground"}`}>
+          {["Subir", "Revisar", "QR"].map((label, index) => (
+            <div key={label} className="flex items-center gap-2">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                  step === s ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
+                  step === ["upload", "review", "qr"][index]
+                    ? "border-primary bg-primary text-primary-foreground"
+                    : "border-muted-foreground text-muted-foreground"
                 }`}
               >
-                {i + 1}
+                {index + 1}
               </div>
-              <span className="font-medium hidden sm:inline">
-                {s === "upload" ? "Subir" : s === "review" ? "Revisar" : "QR"}
-              </span>
+              <span className="font-medium hidden sm:inline">{label}</span>
             </div>
           ))}
         </div>
 
-        {/* CONTENIDO */}
-        {step === "upload" && <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />}
+        {/* SUBIR ARCHIVO */}
+        {step === "upload" && (
+          <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />
+        )}
 
+        {/* REVISAR DATOS */}
         {step === "review" && ocrResult && (
           <div className="space-y-6">
             {validationError && (
@@ -174,10 +162,10 @@ export default function ScannerPage() {
             )}
 
             <Card className="p-6">
-              <div className="flex items-center gap-2 mb-6">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
                 <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <h2 className="text-xl font-semibold">Información detectada</h2>
-              </div>
+                Información detectada
+              </h2>
 
               <VehicleDataForm
                 initialData={ocrResult}
@@ -189,13 +177,15 @@ export default function ScannerPage() {
           </div>
         )}
 
+        {/* QR GENERADO */}
         {step === "qr" && generatedCode && (
           <div className="space-y-6">
             <Alert className="bg-green-50 border-green-200">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertTitle>¡Documento procesado correctamente!</AlertTitle>
+              <AlertTitle>¡Documento procesado!</AlertTitle>
               <AlertDescription>
-                Código generado: <strong className="font-mono">{generatedCode}</strong>
+                Código generado:{" "}
+                <strong className="font-mono">{generatedCode}</strong>
               </AlertDescription>
             </Alert>
 
@@ -203,7 +193,8 @@ export default function ScannerPage() {
 
             <div className="flex justify-center">
               <Button onClick={handleReset} variant="outline" size="lg">
-                <RotateCcw className="h-4 w-4 mr-2" /> Escanear otro documento
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Escanear otro
               </Button>
             </div>
           </div>
