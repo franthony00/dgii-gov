@@ -21,7 +21,7 @@
 
 #header {
     background-color: #7daf18 !important;
-    padding: 25px 20px !important;
+    padding: 30px 20px !important;
     display: flex !important;
     align-items: center !important;
 
@@ -138,17 +138,17 @@
    RESPONSIVE (MÓVILES)
    ============================================================ */
 
-@media (max-width: 600px) {
+@media (max-width: 500px) {
 
     /* El content ocupa el espacio sobrante ↓↓↓ */
     #content {
         flex-grow: 1 !important;     /* Fuerza a empujar el footer abajo */
-        padding-bottom: 5px !important; /* Espacio exacto entre tabla y footer */
+        padding-bottom: 1px !important; /* Espacio exacto entre tabla y footer */
     }
 
     /* Header móvil */
     #header {
-        padding: 18px 15px !important;
+        padding: 25px 15px !important;
     }
 
     #header img {
