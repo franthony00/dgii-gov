@@ -120,6 +120,22 @@
     border-right: 3px solid #ffffff !important;
 }
 
+/* Contenedor que centra la tabla en cualquier dispositivo */
+.table-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* Centra horizontalmente */
+    align-items: center;
+    margin-top: 10px;
+
+    /* Limita el ancho visible igual que DGII */
+    padding: 0 22px !important;  /* ← ESTA ES LA CLAVE DEL DISEÑO REAL */
+}
+
+.table-wrapper .data_table {
+    width: 100%;
+}
+
 /* ============================================================
    RESPONSIVE (MÓVILES)
    ============================================================ */
