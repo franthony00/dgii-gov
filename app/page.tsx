@@ -11,7 +11,6 @@ import { AlertCircle, CheckCircle2, ScanLine, RotateCcw } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import type { OCRResult } from "@/lib/types"
 import { processOCRText, validateOCRResult } from "@/lib/ocr-utils"
-import { saveVehicleData } from "@/lib/storage"
 import Tesseract from "tesseract.js"
 
 export default function ScannerPage() {
@@ -23,13 +22,15 @@ export default function ScannerPage() {
   const [step, setStep] = useState<"upload" | "review" | "qr">("upload")
   const [generatedCode, setGeneratedCode] = useState<string | null>(null)
 
+  // ============================================
+  // 1) Procesar el archivo con OCR
+  // ============================================
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file)
     setIsProcessing(true)
     setValidationError(null)
 
     try {
-      // Realizar OCR con Tesseract.js
       const result = await Tesseract.recognize(file, "spa", {
         logger: (m) => {
           if (m.status === "recognizing text") {
@@ -38,25 +39,22 @@ export default function ScannerPage() {
         },
       })
 
-      // Procesar el texto con nuestras utilidades
       const processedData = processOCRText(result.data.text)
-
-      // Validar los resultados
       const validation = validateOCRResult(processedData)
 
       if (!validation.valid) {
         setValidationError(
-          `No se pudieron detectar algunos campos: ${validation.missing.join(", ")}. Por favor, revisa y completa la información manualmente.`,
+          `No se detectaron algunos campos: ${validation.missing.join(
+            ", "
+          )}. Revisa y completa manualmente.`
         )
       }
 
       setOcrResult(processedData)
       setStep("review")
     } catch (error) {
-      console.error("Error en OCR:", error)
-      setValidationError(
-        "Error al procesar el documento. Por favor, intenta con otra imagen o completa los datos manualmente.",
-      )
+      console.error("Error OCR:", error)
+      setValidationError("No se pudo procesar el documento. Intenta otro archivo.")
       setOcrResult({})
       setStep("review")
     } finally {
@@ -64,32 +62,48 @@ export default function ScannerPage() {
     }
   }
 
+  // ============================================
+  // 2) Enviar datos al backend y guardar en PostgreSQL
+  // ============================================
   const handleSubmit = async (data: OCRResult) => {
     setIsProcessing(true)
+    setValidationError(null)
 
     try {
-      // Guardar en la base de datos
-      const codigo = await saveVehicleData({
-        placa: data.placa || "",
-        tipoVehiculo: data.tipoVehiculo || "",
-        marca: data.marca || "",
-        modelo: data.modelo || "",
-        color: data.color || "",
-        año: data.año || "",
-        chasis: data.chasis || "",
-        fechaExpiracion: data.fechaExpiracion || "",
+      const response = await fetch("/api/vehiculo/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          placa: data.placa,
+          tipoVehiculo: data.tipoVehiculo,
+          marca: data.marca,
+          modelo: data.modelo,
+          color: data.color,
+          ano: data.año, // IMPORTANTE: en DB es "ano"
+          chasis: data.chasis,
+          fechaExpiracion: data.fechaExpiracion,
+        }),
       })
 
-      setGeneratedCode(codigo)
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || "Error desconocido al guardar")
+      }
+
+      setGeneratedCode(result.codigo) // recibiendo el código generado por la API
       setStep("qr")
-      setIsProcessing(false)
     } catch (error) {
-      console.error("Error al guardar:", error)
-      setValidationError("Error al guardar los datos. Por favor, intenta nuevamente.")
+      console.error(error)
+      setValidationError("Hubo un error guardando los datos. Intenta nuevamente.")
+    } finally {
       setIsProcessing(false)
     }
   }
 
+  // ============================================
+  // 3) Reiniciar proceso
+  // ============================================
   const handleReset = () => {
     setSelectedFile(null)
     setOcrResult(null)
@@ -99,60 +113,47 @@ export default function ScannerPage() {
   }
 
   const clientUrl =
-    typeof window !== "undefined" && generatedCode ? `${window.location.origin}/ver?c=${generatedCode}` : ""
+    typeof window !== "undefined" && generatedCode
+      ? `${window.location.origin}/ver?c=${generatedCode}`
+      : ""
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       <div className="container max-w-4xl mx-auto px-4 py-12">
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
             <ScanLine className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-4xl font-bold mb-3 text-balance">Sistema de Escáner de Documentos</h1>
-          <p className="text-muted-foreground text-lg text-balance">
+          <h1 className="text-4xl font-bold mb-3">Sistema de Escáner de Documentos</h1>
+          <p className="text-muted-foreground text-lg">
             Sube una imagen o PDF de tu documento vehicular para extraer la información automáticamente
           </p>
         </div>
 
-        {/* Step Indicator */}
+        {/* STEP INDICATOR */}
         <div className="flex items-center justify-center gap-4 mb-8">
-          <div className={`flex items-center gap-2 ${step === "upload" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "upload" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              1
+          {["upload", "review", "qr"].map((s, i) => (
+            <div key={s} className={`flex items-center gap-2 ${step === s ? "text-primary" : "text-muted-foreground"}`}>
+              <div
+                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
+                  step === s ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
+                }`}
+              >
+                {i + 1}
+              </div>
+              <span className="font-medium hidden sm:inline">
+                {s === "upload" ? "Subir" : s === "review" ? "Revisar" : "QR"}
+              </span>
             </div>
-            <span className="font-medium hidden sm:inline">Subir</span>
-          </div>
-          <div className="w-12 h-0.5 bg-border" />
-          <div className={`flex items-center gap-2 ${step === "review" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "review" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              2
-            </div>
-            <span className="font-medium hidden sm:inline">Revisar</span>
-          </div>
-          <div className="w-12 h-0.5 bg-border" />
-          <div className={`flex items-center gap-2 ${step === "qr" ? "text-primary" : "text-muted-foreground"}`}>
-            <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                step === "qr" ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground"
-              }`}
-            >
-              3
-            </div>
-            <span className="font-medium hidden sm:inline">QR</span>
-          </div>
+          ))}
         </div>
 
-        {/* Content */}
-        {step === "upload" && <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />}
+        {/* CONTENT */}
+        {step === "upload" && (
+          <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />
+        )}
 
         {step === "review" && ocrResult && (
           <div className="space-y-6">
@@ -165,14 +166,9 @@ export default function ScannerPage() {
             )}
 
             <Card className="p-6">
-              <div className="flex items-center gap-2 mb-6">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
-                <h2 className="text-xl font-semibold">Información Extraída</h2>
-              </div>
-
-              <p className="text-sm text-muted-foreground mb-6">
-                Revisa y completa la información detectada del documento. Los campos marcados son obligatorios.
-              </p>
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-green-600" /> Información Extraída
+              </h2>
 
               <VehicleDataForm
                 initialData={ocrResult}
@@ -186,11 +182,11 @@ export default function ScannerPage() {
 
         {step === "qr" && generatedCode && (
           <div className="space-y-6">
-            <Alert className="bg-green-50 border-green-200 dark:bg-green-950 dark:border-green-800">
+            <Alert className="bg-green-50 border-green-200">
               <CheckCircle2 className="h-4 w-4 text-green-600" />
-              <AlertTitle className="text-green-800 dark:text-green-200">¡Documento procesado exitosamente!</AlertTitle>
-              <AlertDescription className="text-green-700 dark:text-green-300">
-                Se ha generado el código <strong className="font-mono">{generatedCode}</strong> para este vehículo.
+              <AlertTitle className="text-green-800">¡Documento procesado!</AlertTitle>
+              <AlertDescription>
+                Código generado: <strong className="font-mono">{generatedCode}</strong>
               </AlertDescription>
             </Alert>
 
@@ -198,12 +194,12 @@ export default function ScannerPage() {
 
             <div className="flex justify-center">
               <Button onClick={handleReset} variant="outline" size="lg">
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Escanear otro documento
+                <RotateCcw className="h-4 w-4 mr-2" /> Escanear otro documento
               </Button>
             </div>
           </div>
         )}
+
       </div>
     </main>
   )

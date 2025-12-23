@@ -1,196 +1,181 @@
-/* Replicando pixel-perfect el diseño oficial de DGII */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #e8e8e8;
+/* ============================================================
+   CONTENEDOR GENERAL (OBLIGA EL FOOTER A IR ABAJO)
+   ============================================================ */
+#page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff !important;
 }
 
-/* Contenedor principal - máximo 900px centrado */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  background-color: #ffffff;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+/* ============================================================
+   HEADER (Marco verde con logo y bordes)
+   ============================================================ */
+#header img {
+    height: 25px !important;
+    width: auto !important;
+    display: block !important;
 }
 
-/* Header verde lima con texto PLACA PROVISIONAL */
-.header {
-  background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%);
-  padding: 28px 45px;
-  border-bottom: 5px solid #4a7c2c;
-  display: flex;
-  align-items: center;
+#header {
+    background-color: #7daf18 !important;
+    padding: 30px 20px !important;
+    display: flex !important;
+    align-items: center !important;
+
+    border-top: 3px solid #ffffff !important;
+    border-left: 3px solid #ffffff !important;
+    border-right: 3px solid #ffffff !important;
+
+    box-shadow: inset 0 -6px 0 #2d2d2d !important;
 }
 
-.header img {
-  height: 50px;
-  width: auto;
-}
-
-/* Sección de títulos - fondo blanco */
-.title-section {
-  background-color: #ffffff;
-  padding: 30px 50px 20px 50px;
-}
-
-.title-section h1 {
-  margin: 0;
-  line-height: 1.2;
+/* ============================================================
+   TÍTULOS
+   ============================================================ */
+#title {
+    padding: 25px 20px 5px 20px !important; /* ← Mismo margen que tendrá la tabla */
+    background: #ffffff !important;
 }
 
 .title-orange {
-  color: #ff9900;
-  font-size: 28px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
+    color: #d58f00 !important;
+    font-size: 1.35em !important;
+    font-weight: bold !important;
+    margin-bottom: .15em !important;
+    display: block !important;
 }
 
 .title-green {
-  color: #5a9e3a;
-  font-size: 36px;
-  font-weight: 400;
-  margin: 0;
+    color: #4b8101 !important;
+    font-size: 1.60em !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    margin-bottom: .4em !important;
 }
 
-/* Contenedor de la tabla */
-.table-container {
-  padding: 30px 50px 50px 50px;
-  flex: 1;
-  background-color: #ffffff;
+/* ============================================================
+   CONTENEDOR DEL CUERPO
+   ============================================================ */
+#content {
+    flex-grow: 1 !important;
+    padding: 0 20px !important;   /* ← AGREGO MÁRGENES LATERALES PARA CENTRAR LA TABLA */
+    padding-bottom: 5px !important;
+    background: #fff !important;
+   padding-left: 20px !important;
+    padding-right: 20px !important;
 }
 
-.table-container p {
-  font-size: 16px;
-  color: #666666;
-  margin: 20px 0;
+/* ============================================================
+   TABLA — centrada y alineada con títulos
+   ============================================================ */
+.data_table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    border: none !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+
+    margin-top: 5px !important;
+    margin-bottom: 40px !important;
+
+    /* Ajusta para que siempre quede centrada */
+    display: table !important;
+
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
-/* Tabla con diseño exacto de DGII */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  border: 1px solid #cccccc;
-  font-size: 16px;
-  margin: 0;
+.data_table tr {
+    border-bottom: 1px solid #e3e3e3 !important;
 }
 
-table tbody tr td:first-child {
-  background-color: #ebebeb;
-  padding: 14px 20px;
-  text-align: left;
-  font-weight: 400;
-  color: #000000;
-  border: 1px solid #cccccc;
-  width: 220px;
-  vertical-align: middle;
+.data_table tr:last-child {
+    border-bottom: none !important;
 }
 
-table tbody tr td:last-child {
-  background-color: #ffffff;
-  padding: 14px 20px;
-  color: #666666;
-  border: 1px solid #cccccc;
-  vertical-align: middle;
+/* Celdas */
+.left-col {
+    background: #efefef !important;
+    width: 35% !important;
+    padding: 20px 12px !important;
+    font-size: 20px !important;
+    font-weight: 400 !important;
+    border-right: 1px solid #e3e3e3 !important;
 }
 
-/* Footer gris */
-.footer {
-  background-color: #c8c8c8;
-  padding: 18px 50px;
-  color: #4a4a4a;
-  font-size: 14px;
-  text-align: center;
-  margin-top: auto;
+.right-col {
+    background: #ffffff !important;
+    width: 65% !important;
+    padding: 20px 12px !important;
+    font-size: 20px !important;
+    color: #676767 !important;
 }
 
-/* Responsive para tablets */
-@media (max-width: 900px) {
-  .container {
-    margin: 0 20px;
-  }
+/* ============================================================
+   FOOTER
+   ============================================================ */
+#footer {
+    padding: 18px 20px !important;
+    background: #cfcfcf !important;
+    color: #3a3a3a !important;
+    font-size: 16px !important;
+
+    border-top: 3px solid #ffffff !important;
+    border-left: 3px solid #ffffff !important;
+    border-right: 3px solid #ffffff !important;
 }
 
-/* Responsive para móviles */
-@media (max-width: 768px) {
-  .container {
-    max-width: 100%;
-    margin: 0;
-  }
+/* Contenedor que centra la tabla en cualquier dispositivo */
+.table-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* Centra horizontalmente */
+    align-items: center;
+    margin-top: 10px;
 
-  .header {
-    padding: 22px 25px;
-  }
-
-  .header img {
-    height: 40px;
-  }
-
-  .title-section {
-    padding: 25px 25px 15px 25px;
-  }
-
-  .title-orange {
-    font-size: 22px;
-  }
-
-  .title-green {
-    font-size: 28px;
-  }
-
-  .table-container {
-    padding: 25px 25px 40px 25px;
-  }
-
-  table {
-    font-size: 14px;
-  }
-
-  table tbody tr td:first-child {
-    width: 150px;
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
-  table tbody tr td:last-child {
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
-  .footer {
-    padding: 15px 25px;
-    font-size: 13px;
-  }
+    /* Limita el ancho visible igual que DGII */
+    padding: 0 22px !important;  /* ← ESTA ES LA CLAVE DEL DISEÑO REAL */
 }
 
-/* Estilos de impresión */
-@media print {
-  body {
-    background-color: #ffffff;
-  }
+.table-wrapper .data_table {
+    width: 100%;
+}
 
-  .container {
-    max-width: 100%;
-    margin: 0;
-  }
+/* ============================================================
+   RESPONSIVE (MÓVILES)
+   ============================================================ */
+@media (max-width: 600px) {
 
-  .header {
-    background: linear-gradient(to bottom, #a8d05f 0%, #8dc44f 100%) !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+   .data_table {
+        padding-left: 25px !important;
+        padding-right: 25px !important;
+        width: calc(100% - 50px) !important; /* deja 25px por lado */
+    }
 
-  table tbody tr td:first-child {
-    background-color: #ebebeb !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+    #content {
+       padding-left: 22px !important;
+        padding-right: 22px !important;
+        padding: 1px !important; /* Márgenes laterales igual que DGII */
+        padding-bottom: 1px !important;
+    }
 
-  .footer {
-    background-color: #c8c8c8 !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+    #header {
+        padding: 25px 15px !important;
+    }
+
+    #header img {
+        height: 26px !important;
+    }
+
+    .title-orange { font-size: 1.27em !important; }
+    .title-green  { font-size: 1.60em !important; }
+
+    .left-col, .right-col {
+        padding: 18px 10px !important;
+        font-size: 20px !important;
+    }
+
+    #page-wrapper {
+        min-height: 100dvh !important;
+    }
 }
