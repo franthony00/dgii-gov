@@ -145,6 +145,15 @@
 
 @media (max-width: 600px) {
 
+    #content {
+        padding-bottom: 55px !important;
+        /*
+            - Antes el espacio era demasiado grande.
+            - Ahora lo bajamos a ~55px ≈ 4 cm en móviles.
+            - Esto acerca visualmente el footer y deja la tabla más “completa”.
+        */
+    }
+
     #header {
         padding: 18px 15px !important;
     }
