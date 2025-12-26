@@ -123,3 +123,4 @@ export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
     </Card>
   );
 }
+
