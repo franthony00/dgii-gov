@@ -4,7 +4,7 @@ import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json(); // ✔️ SOLO UNA VEZ
+    const body = await req.json(); 
 
     const {
       placa,
