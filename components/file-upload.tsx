@@ -1,164 +1,124 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import dynamic from "next/dynamic";
+import { useState, useCallback } from "react";
+import { Upload, FileText, ImageIcon, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, ExternalLink } from "lucide-react";
 
-const QRCodeSVG = dynamic(() => import("qrcode.react").then((mod) => mod.QRCodeSVG), { ssr: false });
-
-interface QRGeneratorProps {
-  url: string;
-  codigo: string;
+interface FileUploadProps {
+  onFileSelect: (file: File) => void;
+  isProcessing?: boolean;
 }
 
-export function QRGenerator({ url, codigo }: QRGeneratorProps) {
-  const [errorLevel, setErrorLevel] = useState<"L" | "M" | "Q" | "H">("L");
-  const [size, setSize] = useState(400);
-  const [border, setBorder] = useState(1);
+export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
+  const [dragActive, setDragActive] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileName, setFileName] = useState<string>("Sin archivo seleccionado");
 
-  // 🎨 Colores del QR
-  const [fgColor, setFgColor] = useState("#000000");
-  const [bgColor, setBgColor] = useState("#FFFFFF");
-
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
+  const handleDrag = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   }, []);
 
-  const downloadQR = () => {
-    const svg = document.getElementById("qr-code") as HTMLElement;
-    if (!svg) return;
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
 
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const img = new Image();
+    if (e.dataTransfer.files?.[0]) handleFile(e.dataTransfer.files[0]);
+  }, []);
 
-    img.onload = () => {
-      canvas.width = size;
-      canvas.height = size;
-      ctx?.drawImage(img, 0, 0);
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.[0]) handleFile(e.target.files[0]);
+  }, []);
 
-      const pngFile = canvas.toDataURL("image/png");
+  const handleFile = (file: File) => {
+    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
 
-      const downloadLink = document.createElement("a");
-      downloadLink.download = `qr-${codigo}.png`;
-      downloadLink.href = pngFile;
-      downloadLink.click();
-    };
+    if (!validTypes.includes(file.type)) {
+      alert("Por favor sube una imagen (JPG, PNG, WEBP) o un PDF");
+      return;
+    }
 
-    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+    setFileName(file.name);
+
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result as string);
+      reader.readAsDataURL(file);
+    } else {
+      setPreview(null);
+    }
+
+    onFileSelect(file);
   };
 
-  if (!isMounted) {
-    return (
-      <Card className="p-6">
-        <h3 className="text-xl font-semibold mb-4">Código QR Generado</h3>
-        <div className="animate-pulse text-muted-foreground">Generando QR...</div>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="p-6">
-      <h3 className="text-xl font-semibold mb-4">Código QR Generado</h3>
-      <p className="text-sm text-muted-foreground mb-6">
-        Escanea este código QR para acceder directamente a la información del vehículo.
-      </p>
+    <Card className="p-6 border bg-white shadow-sm">
+      <div className="text-center mb-4">
+        <p className="font-medium text-lg">Sube tu documento</p>
+        <p className="text-sm text-muted-foreground">{fileName}</p>
+      </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        {/* QR CODE */}
-        <div className="flex flex-col items-center">
-          <div className="bg-white p-4 rounded-lg border-2 border-border">
-            <QRCodeSVG
-              id="qr-code"
-              value={url}
-              size={size}
-              level={errorLevel}
-              margin={border}
-              fgColor={fgColor}
-              bgColor={bgColor}
-            />
+      <div
+        className={`relative border-2 border-dashed rounded-lg p-10 transition-all cursor-pointer 
+          flex flex-col items-center justify-center
+          ${dragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary"}
+          ${isProcessing ? "opacity-50 pointer-events-none" : ""}
+        `}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+      >
+        {/* Input invisible */}
+        <input
+          type="file"
+          onChange={handleChange}
+          accept="image/*,application/pdf"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+
+        {/* Loading */}
+        {isProcessing ? (
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <p className="text-sm text-muted-foreground">Procesando documento…</p>
           </div>
+        ) : preview ? (
+          // PREVIEW
+          <div className="flex flex-col items-center gap-3">
+            <img
+              src={preview}
+              alt="Vista previa"
+              className="max-h-48 rounded-md border shadow-sm"
+            />
+            <p className="text-sm text-muted-foreground">Documento cargado correctamente</p>
+          </div>
+        ) : (
+          // ICONOS Y TEXTO
+          <div className="flex flex-col items-center gap-4">
+            <div className="flex gap-4">
+              <Upload className="h-10 w-10 text-gray-400" />
+              <ImageIcon className="h-10 w-10 text-gray-400" />
+              <FileText className="h-10 w-10 text-gray-400" />
+            </div>
 
-          <div className="mt-4 flex gap-2">
-            <Button onClick={downloadQR} variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Descargar QR
+            <div className="text-center">
+              <p className="font-medium text-gray-700">Arrastra tu archivo aquí</p>
+              <p className="text-sm text-muted-foreground">o haz clic para seleccionarlo</p>
+            </div>
+
+            <Button variant="outline" className="bg-white">
+              Seleccionar Archivo
             </Button>
 
-            <Button asChild variant="outline" size="sm">
-              <a href={url} target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Ver Página
-              </a>
-            </Button>
+            <p className="text-xs text-muted-foreground">
+              Formatos soportados: JPG, PNG, WEBP, PDF
+            </p>
           </div>
-        </div>
-
-        {/* CONFIG */}
-        <div className="space-y-4">
-
-          {/* COLOR FG */}
-          <div className="space-y-2">
-            <Label>Color del QR</Label>
-            <input
-              type="color"
-              value={fgColor}
-              onChange={(e) => setFgColor(e.target.value)}
-              className="w-20 h-10 rounded border cursor-pointer"
-            />
-          </div>
-
-          {/* COLOR BG */}
-          <div className="space-y-2">
-            <Label>Color de Fondo</Label>
-            <input
-              type="color"
-              value={bgColor}
-              onChange={(e) => setBgColor(e.target.value)}
-              className="w-20 h-10 rounded border cursor-pointer"
-            />
-          </div>
-
-          {/* Error Level */}
-          <div className="space-y-2">
-            <Label htmlFor="error-level">Nivel de Corrección</Label>
-            <Select value={errorLevel} onValueChange={(e: any) => setErrorLevel(e)}>
-              <SelectTrigger id="error-level">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="L">L (Bajo)</SelectItem>
-                <SelectItem value="M">M (Medio)</SelectItem>
-                <SelectItem value="Q">Q (Alto)</SelectItem>
-                <SelectItem value="H">H (Máximo)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Size */}
-          <div className="space-y-2">
-            <Label>Tamaño</Label>
-            <Select value={size.toString()} onValueChange={(e) => setSize(parseInt(e))}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="200">200px</SelectItem>
-                <SelectItem value="300">300px</SelectItem>
-                <SelectItem value="400">400px</SelectItem>
-                <SelectItem value="500">500px</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-        </div>
+        )}
       </div>
     </Card>
   );
