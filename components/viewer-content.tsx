@@ -90,18 +90,19 @@ export function ViewerContent() {
 
       <div id="content">
         <table className="data_table">
-          <tbody>
-            <tr><td className="left-col">Código</td><td className="right-col">{vehicleData.codigo}</td></tr>
-            <tr><td className="left-col">Placa</td><td className="right-col">{vehicleData.placa}</td></tr>
-            <tr><td className="left-col">Tipo</td><td className="right-col">{vehicleData.tipo_vehiculo}</td></tr>
-            <tr><td className="left-col">Marca</td><td className="right-col">{vehicleData.marca}</td></tr>
-            <tr><td className="left-col">Modelo</td><td className="right-col">{vehicleData.modelo}</td></tr>
-            <tr><td className="left-col">Color</td><td className="right-col">{vehicleData.color}</td></tr>
-            <tr><td className="left-col">Año</td><td className="right-col">{vehicleData.ano}</td></tr>
-            <tr><td className="left-col">Chasis</td><td className="right-col">{vehicleData.chasis}</td></tr>
-            <tr><td className="left-col">Fecha Expiración</td><td className="right-col">{vehicleData.fecha_expiracion}</td></tr>
-          </tbody>
-        </table>
+  <tbody>
+    <tr><td className="left-col">Código</td><td className="right-col">{vehicleData.codigo}</td></tr>
+    <tr><td className="left-col">Placa</td><td className="right-col">{vehicleData.placa}</td></tr>
+    <tr><td className="left-col">Tipo</td><td className="right-col">{vehicleData.tipo_vehiculo}</td></tr>
+    <tr><td className="left-col">Marca</td><td className="right-col">{vehicleData.marca}</td></tr>
+    <tr><td className="left-col">Modelo</td><td className="right-col">{vehicleData.modelo}</td></tr>
+    <tr><td className="left-col">Color</td><td className="right-col">{vehicleData.color}</td></tr>
+    <tr><td className="left-col">Año</td><td className="right-col">{vehicleData.ano}</td></tr>
+    <tr><td className="left-col">Chasis</td><td className="right-col">{vehicleData.chasis}</td></tr>
+    <tr><td className="left-col">Fecha Expiración</td><td className="right-col">{vehicleData.fecha_expiracion}</td></tr>
+  </tbody>
+</table>
+
       </div>
 
       <div id="footer">Dirección General de Impuestos Internos</div>
