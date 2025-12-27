@@ -1,48 +1,27 @@
-"use server"
+"use server";
 
-import type { VehicleData } from "./types"
+// 🔹 Obtener datos desde tu API real en Neon
+export async function getVehicleData(codigo: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-// Almacenamiento temporal en memoria (se perderá al reiniciar el servidor)
-// En producción, reemplazar con Supabase, Firebase, MongoDB, etc.
-const vehicleDatabase = new Map<string, VehicleData>()
-
-// Generar código único aleatorio
-export async function generateUniqueCode(): Promise<string> {
-  const characters = "abcdefghijklmnopqrstuvwxyz0123456789"
-  let code = ""
-
-  do {
-    code = ""
-    for (let i = 0; i < 7; i++) {
-      code += characters.charAt(Math.floor(Math.random() * characters.length))
+    if (!baseUrl) {
+      console.error("❌ NEXT_PUBLIC_BASE_URL no está configurado");
+      return null;
     }
-  } while (vehicleDatabase.has(code))
 
-  return code
-}
+    const res = await fetch(`${baseUrl}/api/vehiculo/get?c=${codigo}`, {
+      cache: "no-store",
+    });
 
-// Guardar datos del vehículo
-export async function saveVehicleData(data: Omit<VehicleData, "id" | "fechaRegistro">): Promise<string> {
-  const id = await generateUniqueCode()
-  const fechaRegistro = new Date().toISOString()
+    if (!res.ok) {
+      console.warn("❌ No se encontró vehículo con ese código");
+      return null;
+    }
 
-  const vehicleData: VehicleData = {
-    id,
-    ...data,
-    fechaRegistro,
+    return await res.json();
+  } catch (err) {
+    console.error("❌ ERROR consultando vehículo:", err);
+    return null;
   }
-
-  vehicleDatabase.set(id, vehicleData)
-  return id
-}
-
-// Obtener datos del vehículo por código
-export async function getVehicleData(code: string): Promise<VehicleData | null> {
-  const data = vehicleDatabase.get(code)
-  return data || null
-}
-
-// Verificar si existe un código
-export async function codeExists(code: string): Promise<boolean> {
-  return vehicleDatabase.has(code)
 }
