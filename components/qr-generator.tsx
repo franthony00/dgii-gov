@@ -8,7 +8,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Download, ExternalLink } from "lucide-react";
 
-const QRCodeSVG = dynamic(() => import("qrcode.react").then((mod) => mod.QRCodeSVG), { ssr: false });
+const QRCodeSVG = dynamic(
+  () => import("qrcode.react").then((mod) => mod.QRCodeSVG),
+  { ssr: false }
+);
 
 interface QRGeneratorProps {
   url: string;
@@ -18,7 +21,6 @@ interface QRGeneratorProps {
 export function QRGenerator({ url, codigo }: QRGeneratorProps) {
   const [errorLevel, setErrorLevel] = useState<"L" | "M" | "Q" | "H">("L");
   const [size, setSize] = useState(400);
-  const [border, setBorder] = useState(1);
 
   // 🎨 Colores del QR
   const [fgColor, setFgColor] = useState("#000000");
@@ -31,7 +33,7 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
   }, []);
 
   const downloadQR = () => {
-    const svg = document.getElementById("qr-code") as HTMLElement;
+    const svg = document.getElementById("qr-code") as HTMLElement | null;
     if (!svg) return;
 
     const svgData = new XMLSerializer().serializeToString(svg);
@@ -67,11 +69,13 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
   return (
     <Card className="p-6">
       <h3 className="text-xl font-semibold mb-4">Código QR Generado</h3>
+
       <p className="text-sm text-muted-foreground mb-6">
         Escanea este código QR para acceder directamente a la información del vehículo.
       </p>
 
       <div className="grid md:grid-cols-2 gap-8">
+        
         {/* QR CODE */}
         <div className="flex flex-col items-center">
           <div className="bg-white p-4 rounded-lg border-2 border-border">
@@ -103,7 +107,6 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
         {/* CONFIG */}
         <div className="space-y-4">
 
-          {/* COLOR FG */}
           <div className="space-y-2">
             <Label>Color del QR</Label>
             <input
@@ -114,7 +117,6 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
             />
           </div>
 
-          {/* COLOR BG */}
           <div className="space-y-2">
             <Label>Color de Fondo</Label>
             <input
@@ -125,12 +127,11 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
             />
           </div>
 
-          {/* Error Level */}
           <div className="space-y-2">
             <Label htmlFor="error-level">Nivel de Corrección</Label>
-            <Select value={errorLevel} onValueChange={(e: any) => setErrorLevel(e)}>
+            <Select value={errorLevel} onValueChange={(e: "L" | "M" | "Q" | "H") => setErrorLevel(e)}>
               <SelectTrigger id="error-level">
-                <SelectValue />
+                <SelectValue placeholder="Seleccione nivel" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="L">L (Bajo)</SelectItem>
@@ -141,18 +142,17 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
             </Select>
           </div>
 
-          {/* Size */}
           <div className="space-y-2">
-            <Label>Tamaño</Label>
+            <Label>Tamaño del QR</Label>
             <Select value={size.toString()} onValueChange={(e) => setSize(parseInt(e))}>
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Seleccione tamaño" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="200">200px</SelectItem>
-                <SelectItem value="300">300px</SelectItem>
-                <SelectItem value="400">400px</SelectItem>
-                <SelectItem value="500">500px</SelectItem>
+                <SelectItem value="200">200 px</SelectItem>
+                <SelectItem value="300">300 px</SelectItem>
+                <SelectItem value="400">400 px</SelectItem>
+                <SelectItem value="500">500 px</SelectItem>
               </SelectContent>
             </Select>
           </div>
