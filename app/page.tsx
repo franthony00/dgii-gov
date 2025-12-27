@@ -1,45 +1,43 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { FileUpload } from "@/components/file-upload";
 import { VehicleDataForm } from "@/components/vehicle-data-form";
 import { QRGenerator } from "@/components/qr-generator";
+
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, CheckCircle2, ScanLine, RotateCcw } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+
+import { ScanLine, AlertCircle, CheckCircle2, RotateCcw } from "lucide-react";
+
 import type { OCRResult } from "@/lib/types";
 import { processOCRText, validateOCRResult } from "@/lib/ocr-utils";
 import Tesseract from "tesseract.js";
 
 export default function ScannerPage() {
-  const router = useRouter();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ocrResult, setOcrResult] = useState<OCRResult | null>(null);
-  const [validationError, setValidationError] = useState<string | null>(null);
-  const [step, setStep] = useState<"upload" | "review" | "qr">("upload");
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
-  // ============================================
-  // 1) PROCESAR OCR
-  // ============================================
+  const [step, setStep] = useState<"upload" | "review" | "qr">("upload");
+
+  // ============================================================
+  // OCR
+  // ============================================================
   const handleFileSelect = async (file: File) => {
     setSelectedFile(file);
-    setIsProcessing(true);
     setValidationError(null);
+    setIsProcessing(true);
 
     try {
-      const result = await Tesseract.recognize(file, "spa", {
-        logger: (m) => {
-          if (m.status === "recognizing text") {
-            console.log("OCR:", Math.round(m.progress * 100) + "%");
-          }
-        },
+      const res = await Tesseract.recognize(file, "spa", {
+        logger: (m) => console.log(m),
       });
 
-      const processed = processOCRText(result.data.text);
+      const processed = processOCRText(res.data.text);
       const validation = validateOCRResult(processed);
 
       if (!validation.valid) {
@@ -50,22 +48,22 @@ export default function ScannerPage() {
 
       setOcrResult(processed);
       setStep("review");
-    } catch (error) {
-      setValidationError("No se pudo procesar este documento.");
-      setOcrResult({});
-      setStep("review");
+    } catch (err) {
+      console.error(err);
+      setValidationError("No se pudo procesar el documento.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // ============================================
-  // 2) GUARDAR EN POSTGRES
-  // ============================================
+  // ============================================================
+  // GUARDAR EN BASE DE DATOS
+  // ============================================================
   const handleSubmit = async (data: OCRResult) => {
     setIsProcessing(true);
+
     try {
-      const response = await fetch("/api/vehiculo/create", {
+      const res = await fetch("/api/vehiculo/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -80,29 +78,24 @@ export default function ScannerPage() {
         }),
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || "Error guardando");
-      }
-
-      setGeneratedCode(result.codigo);
+      const json = await res.json();
+      setGeneratedCode(json.codigo);
       setStep("qr");
-    } catch (err) {
+    } catch (e) {
       setValidationError("Error guardando la información.");
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // ============================================
-  // 3) REINICIAR
-  // ============================================
-  const handleReset = () => {
+  // ============================================================
+  // REINICIAR
+  // ============================================================
+  const reset = () => {
     setSelectedFile(null);
     setOcrResult(null);
-    setValidationError(null);
     setGeneratedCode(null);
+    setValidationError(null);
     setStep("upload");
   };
 
@@ -112,89 +105,119 @@ export default function ScannerPage() {
       : "";
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
-      <div className="container max-w-4xl mx-auto px-4 py-12">
+    <main className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-50 py-16">
+      <div className="max-w-3xl mx-auto">
+
         {/* HEADER */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
-            <ScanLine className="h-8 w-8 text-primary" />
+        <div className="text-center mb-14">
+          <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full bg-blue-100 text-blue-700 shadow">
+            <ScanLine className="w-8 h-8" />
           </div>
-          <h1 className="text-4xl font-bold mb-3">
+
+          <h1 className="text-4xl font-bold mt-6 tracking-tight text-gray-800">
             Sistema de Escáner de Documentos
           </h1>
-          <p className="text-muted-foreground text-lg">
-            Sube un documento para extraer automáticamente la información
+
+          <p className="text-gray-500 text-lg mt-2">
+            Sube, revisa y valida información vehicular automáticamente.
           </p>
         </div>
 
-        {/* INDICADOR DE PASOS */}
-        <div className="flex items-center justify-center gap-4 mb-8">
-          {["Subir", "Revisar", "QR"].map((label, index) => (
-            <div key={label} className="flex items-center gap-2">
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                  step === ["upload", "review", "qr"][index]
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-muted-foreground text-muted-foreground"
-                }`}
-              >
-                {index + 1}
+        {/* PASOS */}
+        <div className="flex justify-center mb-10">
+          <div className="flex items-center gap-6 text-gray-600">
+
+            {/* Step 1 */}
+            <div className="flex items-center gap-2">
+              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
+                ${step === "upload" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+                1
               </div>
-              <span className="font-medium hidden sm:inline">{label}</span>
+              <span className="hidden sm:block">Subir</span>
             </div>
-          ))}
+
+            <div className="w-12 h-[2px] bg-gray-300"></div>
+
+            {/* Step 2 */}
+            <div className="flex items-center gap-2">
+              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
+                ${step === "review" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+                2
+              </div>
+              <span className="hidden sm:block">Revisar</span>
+            </div>
+
+            <div className="w-12 h-[2px] bg-gray-300"></div>
+
+            {/* Step 3 */}
+            <div className="flex items-center gap-2">
+              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
+                ${step === "qr" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+                3
+              </div>
+              <span className="hidden sm:block">QR</span>
+            </div>
+          </div>
         </div>
 
-        {/* SUBIR ARCHIVO */}
+        {/* STEP: UPLOAD */}
         {step === "upload" && (
-          <FileUpload onFileSelect={handleFileSelect} isProcessing={isProcessing} />
+          <Card className="p-8 shadow-xl bg-white border border-gray-200 rounded-2xl">
+            <FileUpload
+              onFileSelect={handleFileSelect}
+              isProcessing={isProcessing}
+            />
+          </Card>
         )}
 
-        {/* REVISAR DATOS */}
-        {step === "review" && ocrResult && (
+        {/* STEP: REVIEW */}
+        {step === "review" && (
           <div className="space-y-6">
+
             {validationError && (
-              <Alert variant="destructive">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
+              <Alert variant="destructive" className="shadow">
+                <AlertCircle className="h-5 w-5" />
+                <AlertTitle>Error en el documento</AlertTitle>
                 <AlertDescription>{validationError}</AlertDescription>
               </Alert>
             )}
 
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <CheckCircle2 className="h-5 w-5 text-green-600" />
+            <Card className="p-8 shadow-xl">
+              <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-blue-700">
+                <CheckCircle2 className="h-5 w-5" />
                 Información detectada
               </h2>
 
               <VehicleDataForm
-                initialData={ocrResult}
+                initialData={ocrResult!}
                 onSubmit={handleSubmit}
-                onCancel={handleReset}
+                onCancel={reset}
                 isProcessing={isProcessing}
               />
             </Card>
           </div>
         )}
 
-        {/* QR GENERADO */}
-        {step === "qr" && generatedCode && (
+        {/* STEP: QR */}
+        {step === "qr" && (
           <div className="space-y-6">
-            <Alert className="bg-green-50 border-green-200">
-              <CheckCircle2 className="h-4 w-4 text-green-600" />
+
+            <Alert className="bg-green-50 border-green-400 shadow">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
               <AlertTitle>¡Documento procesado!</AlertTitle>
               <AlertDescription>
-                Código generado:{" "}
-                <strong className="font-mono">{generatedCode}</strong>
+                Código generado: <strong className="font-mono">{generatedCode}</strong>
               </AlertDescription>
             </Alert>
 
-            <QRGenerator url={clientUrl} codigo={generatedCode} />
+            <Card className="p-8 shadow-xl">
+              <QRGenerator url={clientUrl} codigo={generatedCode!} />
+            </Card>
 
             <div className="flex justify-center">
-              <Button onClick={handleReset} variant="outline" size="lg">
-                <RotateCcw className="h-4 w-4 mr-2" />
-                Escanear otro
+              <Button size="lg" className="mt-3" onClick={reset}>
+                <RotateCcw className="h-5 w-5 mr-2" />
+                Escanear otro documento
               </Button>
             </div>
           </div>
