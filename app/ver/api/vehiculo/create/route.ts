@@ -1,10 +1,6 @@
 import { NextResponse } from "next/server";
+import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
-import { Pool } from "pg";
-
-const pool = new Pool({
-  connectionString: process.env.POSTGRES_URL
-});
 
 export async function POST(req: Request) {
   try {
@@ -23,12 +19,12 @@ export async function POST(req: Request) {
 
     const codigo = randomUUID().slice(0, 8).toUpperCase();
 
-    await pool.query(
+    await db.query(
       `
-      INSERT INTO vehiculos
+      INSERT INTO vehiculos 
       (placa, tipo_vehiculo, marca, modelo, color, ano, chasis, fecha_expiracion, codigo)
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-      `,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+    `,
       [
         placa,
         tipoVehiculo,
@@ -38,18 +34,18 @@ export async function POST(req: Request) {
         ano,
         chasis,
         fechaExpiracion,
-        codigo
+        codigo,
       ]
     );
 
-    return NextResponse.json(
-      { message: "Vehículo guardado", codigo },
-      { status: 200 }
-    );
+    return NextResponse.json({
+      message: "Vehículo guardado correctamente",
+      codigo,
+    });
   } catch (error) {
-    console.error("Error en API:", error);
+    console.error("ERROR AL GUARDAR:", error);
     return NextResponse.json(
-      { error: "Error guardando el vehículo" },
+      { error: "Error guardando la información" },
       { status: 500 }
     );
   }
