@@ -13,7 +13,7 @@ interface FileUploadProps {
 export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
-  const [fileName, setFileName] = useState<string>("Sin archivo seleccionado");
+  const [fileName, setFileName] = useState<string>("Ningún archivo seleccionado");
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -34,10 +34,16 @@ export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
   }, []);
 
   const handleFile = (file: File) => {
-    const validTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];
+    const validTypes = [
+      "image/jpeg",
+      "image/jpg",
+      "image/png",
+      "image/webp",
+      "application/pdf",
+    ];
 
     if (!validTypes.includes(file.type)) {
-      alert("Por favor sube una imagen (JPG, PNG, WEBP) o un PDF");
+      alert("Solo se permiten imágenes (JPG, PNG, WEBP) o documentos PDF");
       return;
     }
 
@@ -55,16 +61,22 @@ export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
   };
 
   return (
-    <Card className="p-6 border bg-white shadow-sm">
-      <div className="text-center mb-4">
-        <p className="font-medium text-lg">Sube tu documento</p>
+    <Card className="p-8 border bg-white shadow-lg rounded-2xl">
+      {/* Título */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold">Escanear Documento</h2>
         <p className="text-sm text-muted-foreground">{fileName}</p>
       </div>
 
+      {/* Área de carga */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-10 transition-all cursor-pointer 
-          flex flex-col items-center justify-center
-          ${dragActive ? "border-primary bg-primary/10" : "border-gray-300 hover:border-primary"}
+        className={`relative border-2 border-dashed rounded-2xl p-10 transition-all duration-300 cursor-pointer
+          flex flex-col items-center justify-center gap-4
+          ${
+            dragActive
+              ? "border-primary bg-primary/5 shadow-inner scale-[1.01]"
+              : "border-gray-300 hover:border-primary hover:bg-muted/30"
+          }
           ${isProcessing ? "opacity-50 pointer-events-none" : ""}
         `}
         onDragEnter={handleDrag}
@@ -83,39 +95,45 @@ export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
         {/* Loading */}
         {isProcessing ? (
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="h-10 w-10 animate-spin text-primary" />
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
             <p className="text-sm text-muted-foreground">Procesando documento…</p>
           </div>
         ) : preview ? (
-          // PREVIEW
+          // Vista previa
           <div className="flex flex-col items-center gap-3">
             <img
               src={preview}
               alt="Vista previa"
-              className="max-h-48 rounded-md border shadow-sm"
+              className="max-h-56 rounded-xl border shadow-md"
             />
-            <p className="text-sm text-muted-foreground">Documento cargado correctamente</p>
+            <p className="text-sm font-medium text-primary">
+              Documento listo para analizar
+            </p>
           </div>
         ) : (
-          // ICONOS Y TEXTO
-          <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-4">
-              <Upload className="h-10 w-10 text-gray-400" />
-              <ImageIcon className="h-10 w-10 text-gray-400" />
-              <FileText className="h-10 w-10 text-gray-400" />
+          // Estado inicial
+          <div className="flex flex-col items-center gap-5">
+            <div className="flex gap-6">
+              <Upload className="h-12 w-12 text-gray-400" />
+              <ImageIcon className="h-12 w-12 text-gray-400" />
+              <FileText className="h-12 w-12 text-gray-400" />
             </div>
 
-            <div className="text-center">
-              <p className="font-medium text-gray-700">Arrastra tu archivo aquí</p>
-              <p className="text-sm text-muted-foreground">o haz clic para seleccionarlo</p>
+            <div className="text-center space-y-1">
+              <p className="font-medium text-gray-700 text-lg">
+                Arrastra tu archivo aquí
+              </p>
+              <p className="text-sm text-muted-foreground">
+                o selecciona uno manualmente
+              </p>
             </div>
 
-            <Button variant="outline" className="bg-white">
+            <Button variant="outline" className="px-6 py-2 text-base rounded-xl">
               Seleccionar Archivo
             </Button>
 
-            <p className="text-xs text-muted-foreground">
-              Formatos soportados: JPG, PNG, WEBP, PDF
+            <p className="text-xs text-muted-foreground mt-2">
+              Formatos permitidos: JPG, PNG, WEBP, PDF
             </p>
           </div>
         )}
@@ -123,4 +141,3 @@ export function FileUpload({ onFileSelect, isProcessing }: FileUploadProps) {
     </Card>
   );
 }
-
