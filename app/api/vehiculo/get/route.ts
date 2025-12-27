@@ -4,32 +4,35 @@ import { db } from "@/lib/db";
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
-    const codigo = searchParams.get("codigo");
+    const code = searchParams.get("code");
 
-    if (!codigo) {
+    if (!code) {
       return NextResponse.json(
-        { error: "Código no proporcionado" },
+        { success: false, error: "Código no proporcionado" },
         { status: 400 }
       );
     }
 
     const result = await db.query(
       `SELECT * FROM vehiculos WHERE codigo = $1 LIMIT 1`,
-      [codigo]
+      [code]
     );
 
-    if (result.rows.length === 0) {
+    if (result.rowCount === 0) {
       return NextResponse.json(
-        { error: "No existe un documento con este código" },
+        { success: false, error: "No existe vehículo con ese código" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(result.rows[0]);
-  } catch (error) {
-    console.error("ERROR CONSULTANDO VEHÍCULO:", error);
+    return NextResponse.json({
+      success: true,
+      data: result.rows[0], // ESTE OBJETO LLEGA A ViewerContent
+    });
+  } catch (err) {
+    console.error("ERROR EN GET VEHICULO:", err);
     return NextResponse.json(
-      { error: "Error consultando el vehículo" },
+      { success: false, error: "Error interno en el servidor" },
       { status: 500 }
     );
   }
