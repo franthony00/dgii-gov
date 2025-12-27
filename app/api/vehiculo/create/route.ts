@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { randomUUID } from "crypto";
+
+function generateCode() {
+  const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+  let code = "";
+  for (let i = 0; i < 7; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
 
 export async function POST(req: Request) {
   try {
@@ -17,7 +25,7 @@ export async function POST(req: Request) {
       fechaExpiracion
     } = body;
 
-    const codigo = randomUUID().slice(0, 8).toUpperCase();
+    const codigo = generateCode(); // ← nuevo formato
 
     await db.query(
       `
@@ -34,7 +42,7 @@ export async function POST(req: Request) {
         ano,
         chasis,
         fechaExpiracion,
-        codigo,
+        codigo
       ]
     );
 
