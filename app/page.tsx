@@ -105,12 +105,12 @@ export default function ScannerPage() {
       : "";
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 via-gray-100 to-gray-50 py-16">
-      <div className="max-w-3xl mx-auto">
+    <main className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 py-16">
+      <div className="max-w-3xl mx-auto px-4">
 
         {/* HEADER */}
         <div className="text-center mb-14">
-          <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full bg-blue-100 text-blue-700 shadow">
+          <div className="w-16 h-16 mx-auto flex items-center justify-center rounded-full bg-blue-100 text-blue-700 shadow-md">
             <ScanLine className="w-8 h-8" />
           </div>
 
@@ -124,38 +124,53 @@ export default function ScannerPage() {
         </div>
 
         {/* PASOS */}
-        <div className="flex justify-center mb-10">
+        <div className="flex justify-center mb-12">
           <div className="flex items-center gap-6 text-gray-600">
 
             {/* Step 1 */}
             <div className="flex items-center gap-2">
-              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
-                ${step === "upload" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+              <div
+                className={`w-9 h-9 flex items-center justify-center rounded-full font-semibold transition-all
+                ${step === "upload"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-gray-200"
+                }`}
+              >
                 1
               </div>
-              <span className="hidden sm:block">Subir</span>
+              <span className="font-medium hidden sm:block">Subir</span>
             </div>
 
             <div className="w-12 h-[2px] bg-gray-300"></div>
 
             {/* Step 2 */}
             <div className="flex items-center gap-2">
-              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
-                ${step === "review" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+              <div
+                className={`w-9 h-9 flex items-center justify-center rounded-full font-semibold transition-all
+                ${step === "review"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-gray-200"
+                }`}
+              >
                 2
               </div>
-              <span className="hidden sm:block">Revisar</span>
+              <span className="font-medium hidden sm:block">Revisar</span>
             </div>
 
             <div className="w-12 h-[2px] bg-gray-300"></div>
 
             {/* Step 3 */}
             <div className="flex items-center gap-2">
-              <div className={`w-9 h-9 flex items-center justify-center rounded-full 
-                ${step === "qr" ? "bg-blue-600 text-white shadow" : "bg-gray-200"}`}>
+              <div
+                className={`w-9 h-9 flex items-center justify-center rounded-full font-semibold transition-all
+                ${step === "qr"
+                    ? "bg-blue-600 text-white shadow-lg"
+                    : "bg-gray-200"
+                }`}
+              >
                 3
               </div>
-              <span className="hidden sm:block">QR</span>
+              <span className="font-medium hidden sm:block">QR</span>
             </div>
           </div>
         </div>
@@ -175,14 +190,14 @@ export default function ScannerPage() {
           <div className="space-y-6">
 
             {validationError && (
-              <Alert variant="destructive" className="shadow">
+              <Alert variant="destructive" className="shadow-md">
                 <AlertCircle className="h-5 w-5" />
                 <AlertTitle>Error en el documento</AlertTitle>
                 <AlertDescription>{validationError}</AlertDescription>
               </Alert>
             )}
 
-            <Card className="p-8 shadow-xl">
+            <Card className="p-8 shadow-xl rounded-2xl">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2 text-blue-700">
                 <CheckCircle2 className="h-5 w-5" />
                 Información detectada
@@ -206,16 +221,19 @@ export default function ScannerPage() {
               <CheckCircle2 className="h-5 w-5 text-green-600" />
               <AlertTitle>¡Documento procesado!</AlertTitle>
               <AlertDescription>
-                Código generado: <strong className="font-mono">{generatedCode}</strong>
+                Código generado:{" "}
+                <strong className="font-mono text-blue-700">
+                  {generatedCode}
+                </strong>
               </AlertDescription>
             </Alert>
 
-            <Card className="p-8 shadow-xl">
+            <Card className="p-8 shadow-xl rounded-2xl">
               <QRGenerator url={clientUrl} codigo={generatedCode!} />
             </Card>
 
-            <div className="flex justify-center">
-              <Button size="lg" className="mt-3" onClick={reset}>
+            <div className="flex justify-center mt-4">
+              <Button size="lg" onClick={reset} className="shadow">
                 <RotateCcw className="h-5 w-5 mr-2" />
                 Escanear otro documento
               </Button>
