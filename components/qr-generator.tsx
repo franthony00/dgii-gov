@@ -80,7 +80,6 @@ export function QRGenerator({ url, codigo }: QRGeneratorProps) {
               value={url}
               size={size}
               level={errorLevel}
-              margin={border}
               fgColor={fgColor}
               bgColor={bgColor}
             />
