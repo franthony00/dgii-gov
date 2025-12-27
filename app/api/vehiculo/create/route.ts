@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { db } from "@/lib/db";
 import { randomUUID } from "crypto";
 
 export async function POST(req: Request) {
