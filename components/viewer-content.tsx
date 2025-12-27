@@ -21,7 +21,7 @@ export function ViewerContent() {
         const res = await fetch(`/api/vehiculo/get?code=${code}`);
         const json = await res.json();
 
-        console.log("RESPUESTA DEL SERVIDOR:", json);
+        console.log("JSON:", json);
 
         if (json.success) {
           setVehicleData(json.data);
@@ -29,7 +29,7 @@ export function ViewerContent() {
           setVehicleData(null);
         }
       } catch (error) {
-        console.error("ERROR FETCHING VEHICLE:", error);
+        console.error("ERROR FETCH:", error);
         setVehicleData(null);
       }
 
@@ -39,19 +39,12 @@ export function ViewerContent() {
     fetchData();
   }, [code]);
 
-  // LOADING
-  if (loading) {
-    return <p style={{ padding: 40 }}>Cargando información oficial...</p>;
-  }
+  if (loading) return <p>Cargando…</p>;
+  if (!vehicleData) return <p>No existe documento asociado.</p>;
 
-  // NO DATA
-  if (!vehicleData) {
-    return <p style={{ padding: 40 }}>No existe un documento asociado a este código.</p>;
-  }
-
-  // FINAL VIEW
   return (
     <div className="container">
+
       <div id="header">
         <img src="/placa-provisional-header.png" alt="PLACA PROVISIONAL" />
       </div>
@@ -66,7 +59,7 @@ export function ViewerContent() {
           <tbody>
             <tr><td className="left-col">Código</td><td className="right-col">{vehicleData.codigo}</td></tr>
             <tr><td className="left-col">Placa</td><td className="right-col">{vehicleData.placa}</td></tr>
-            <tr><td className="left-col">Tipo Vehículo</td><td className="right-col">{vehicleData.tipo_vehiculo}</td></tr>
+            <tr><td className="left-col">Tipo</td><td className="right-col">{vehicleData.tipo_vehiculo}</td></tr>
             <tr><td className="left-col">Marca</td><td className="right-col">{vehicleData.marca}</td></tr>
             <tr><td className="left-col">Modelo</td><td className="right-col">{vehicleData.modelo}</td></tr>
             <tr><td className="left-col">Color</td><td className="right-col">{vehicleData.color}</td></tr>
