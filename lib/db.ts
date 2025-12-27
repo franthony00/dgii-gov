@@ -1,6 +1,10 @@
 import { Pool } from "pg";
 
-export const db = new Pool({
+if (!process.env.POSTGRES_URL) {
+  throw new Error("❌ Missing POSTGRES_URL in environment variables");
+}
+
+export const pool = new Pool({
   connectionString: process.env.POSTGRES_URL,
   ssl: {
     rejectUnauthorized: false,
